@@ -5,7 +5,9 @@ import os
 import uuid
 
 # Set default test server URL, allow override via environment variable
-API_BASE_URL = os.getenv("TEST_API_BASE_URL", "https://api.udgam.io/v1")
+API_BASE_URL = os.getenv("TEST_API_BASE_URL", "http://127.0.0.1:5000/v1/")
+
+print(API_BASE_URL)
 
 
 class ApiClient:
@@ -26,7 +28,7 @@ class ApiClient:
             del self.headers["Authorization"]
 
     def url(self, path):
-        return urljoin(self.base_url, path)
+        return urljoin(self.base_url, path.lstrip("/"))
 
     def get(self, path, **kwargs):
         return requests.get(self.url(path), headers=self.headers, **kwargs)
@@ -44,7 +46,7 @@ class ApiClient:
 @pytest.fixture
 def api_client():
     """Create a new API client for each test"""
-    return ApiClient()
+    return ApiClient(base_url=API_BASE_URL)
 
 
 @pytest.fixture

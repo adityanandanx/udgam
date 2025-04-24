@@ -16,6 +16,7 @@ class TestAuthentication:
             "firstName": "Test",
             "lastName": "User",
         }
+        print(api_client.base_url)
 
         response = api_client.post("/auth/register", json=register_data)
 

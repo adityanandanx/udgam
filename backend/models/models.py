@@ -2,16 +2,31 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from uuid import UUID
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
-@dataclass
-class User:
-    id: UUID
-    username: str
-    email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    created_at: Optional[datetime] = None
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.String(36), primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    firstName = db.Column(db.String(50), nullable=True)
+    lastName = db.Column(db.String(50), nullable=True)
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "firstName": self.firstName,
+            "lastName": self.lastName,
+            "createdAt": self.createdAt.isoformat() + "Z",
+        }
 
 
 @dataclass
