@@ -1,0 +1,652 @@
+{
+  "info": {
+    "_postman_id": "0e3d9f5f-7a92-4e21-b3a0-9f5e3a8124c8",
+    "name": "Udgam API",
+    "description": "Collection for testing the Udgam startup ideation platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.udgam.io/v1",
+      "type": "string"
+    },
+    {
+      "key": "ideaId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "password",
+        "value": "yourpassword",
+        "type": "string"
+      },
+      {
+        "key": "username",
+        "value": "testuser",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"yourpassword\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has token\", function () {",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "    pm.expect(jsonData.user).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"yourpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with user credentials"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData.username).to.eql('testuser');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            },
+            "description": "Get the current user's profile"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for user registration and authentication"
+    },
+    {
+      "name": "Ideas",
+      "item": [
+        {
+          "name": "List All Ideas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has data array\", function () {",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ideas?status=active&limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Get a list of all ideas for the authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has idea data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData.title).to.eql('Mobile App for Local Food Discovery');",
+                  "    pm.collectionVariables.set(\"ideaId\", jsonData.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Mobile App for Local Food Discovery\",\n    \"description\": \"An app that helps users discover hidden local food spots and specialties not commonly found on mainstream platforms. The app emphasizes authentic local cuisine and provides cultural context for each dish.\",\n    \"problemStatement\": \"Travelers and locals alike struggle to find authentic local food experiences beyond touristy restaurants, leading to missed cultural opportunities and homogenized dining experiences.\",\n    \"targetMarket\": \"Food enthusiasts, travelers, and culturally curious individuals aged 25-45 who value authentic experiences over convenience.\",\n    \"tags\": [\"food\", \"mobile-app\", \"local\", \"discovery\", \"travel\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ideas",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas"]
+            },
+            "description": "Create a new startup idea"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Idea by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct idea data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"ideaId\"));",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}"]
+            },
+            "description": "Get details of a specific idea by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has updated idea data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"ideaId\"));",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData.title).to.eql('FoodScout: Mobile App for Local Food Discovery');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData.status).to.eql('active');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"FoodScout: Mobile App for Local Food Discovery\",\n    \"description\": \"An app that helps users discover hidden local food spots and specialties not commonly found on mainstream platforms. The app emphasizes authentic local cuisine and provides cultural context for each dish.\",\n    \"problemStatement\": \"Travelers and locals alike struggle to find authentic local food experiences beyond touristy restaurants, leading to missed cultural opportunities and homogenized dining experiences.\",\n    \"targetMarket\": \"Food enthusiasts, travelers, and culturally curious individuals aged 25-45 who value authentic experiences over convenience.\",\n    \"status\": \"active\",\n    \"tags\": [\"food\", \"mobile-app\", \"local\", \"discovery\", \"travel\", \"cuisine\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}"]
+            },
+            "description": "Update an existing idea"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate New Ideas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has generated ideas\", function () {",
+                  "    pm.expect(jsonData).to.have.property('ideas');",
+                  "    pm.expect(jsonData.ideas).to.be.an('array');",
+                  "    pm.expect(jsonData.ideas.length).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"domain\": \"EdTech\",\n    \"problemArea\": \"Personalized learning for K-12 students\",\n    \"constraints\": [\"mobile-first\", \"low-connectivity areas\", \"gamification\"],\n    \"userPreferences\": {\n        \"targetAgeGroup\": \"6-12\",\n        \"focusSubjects\": [\"mathematics\", \"science\"]\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ideas/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "generate"]
+            },
+            "description": "Generate new idea suggestions based on parameters"
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has validation scores\", function () {",
+                  "    pm.expect(jsonData).to.have.property('score');",
+                  "    pm.expect(jsonData).to.have.property('marketFitScore');",
+                  "    pm.expect(jsonData).to.have.property('feasibilityScore');",
+                  "    pm.expect(jsonData).to.have.property('innovationScore');",
+                  "    pm.expect(jsonData).to.have.property('insights');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}", "validate"]
+            },
+            "description": "Validate an idea and get scores and insights"
+          },
+          "response": []
+        },
+        {
+          "name": "Refine Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has refinement suggestions\", function () {",
+                  "    pm.expect(jsonData).to.have.property('originalIdea');",
+                  "    pm.expect(jsonData).to.have.property('refinements');",
+                  "    pm.expect(jsonData.refinements).to.be.an('array');",
+                  "    pm.expect(jsonData.refinements.length).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"ideaId\": \"{{ideaId}}\",\n    \"refinementGoal\": \"marketFit\",\n    \"constraints\": [\"must be mobile app\", \"focus on user experience\", \"consider monetization\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ideas/refine",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "refine"]
+            },
+            "description": "Get refinement suggestions for an existing idea"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}"]
+            },
+            "description": "Delete an idea (use with caution)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for managing startup ideas"
+    },
+    {
+      "name": "Market Research",
+      "item": [
+        {
+          "name": "Get Market Insights",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has market insights\", function () {",
+                  "    pm.expect(jsonData).to.have.property('location');",
+                  "    pm.expect(jsonData.location).to.include('Mumbai');",
+                  "    pm.expect(jsonData).to.have.property('problems');",
+                  "    pm.expect(jsonData.problems).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/market/insights?location=Mumbai, India&domain=FoodTech",
+              "host": ["{{baseUrl}}"],
+              "path": ["market", "insights"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Mumbai, India"
+                },
+                {
+                  "key": "domain",
+                  "value": "FoodTech"
+                }
+              ]
+            },
+            "description": "Get market insights for a specific location"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for market research and insights"
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "List Documents for Idea",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}", "documents"]
+            },
+            "description": "List all documents associated with an idea"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate New Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has document data\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('ideaId');",
+                  "    pm.expect(jsonData.ideaId).to.eql(pm.collectionVariables.get(\"ideaId\"));",
+                  "    pm.expect(jsonData).to.have.property('type');",
+                  "    pm.expect(jsonData.type).to.eql('pitchDeck');",
+                  "    pm.expect(jsonData).to.have.property('content');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"pitchDeck\",\n    \"format\": \"markdown\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ideas/{{ideaId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["ideas", "{{ideaId}}", "documents"]
+            },
+            "description": "Generate a new document for an idea"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for managing idea documents"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ]
+}

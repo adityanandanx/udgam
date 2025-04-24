@@ -1,0 +1,635 @@
+openapi: 3.0.3
+info:
+  title: Udgam API
+  description: API for the Udgam startup ideation and development platform
+  version: 1.0.0
+  
+servers:
+  - url: https://api.udgam.io/v1
+    description: Production server
+  
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - username
+        - email
+    
+    Idea:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        problemStatement:
+          type: string
+        targetMarket:
+          type: string
+        validationScore:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 10
+        status:
+          type: string
+          enum: [draft, active, archived]
+        tags:
+          type: array
+          items:
+            type: string
+        relatedIdeas:
+          type: array
+          items:
+            type: string
+            format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - title
+        - status
+    
+    ValidationResult:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+        marketFitScore:
+          type: number
+          format: float
+        feasibilityScore:
+          type: number
+          format: float
+        innovationScore:
+          type: number
+          format: float
+        insights:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              message:
+                type: string
+              severity:
+                type: string
+                enum: [positive, neutral, concern, critical]
+      required:
+        - score
+        - marketFitScore
+        - feasibilityScore
+        - innovationScore
+    
+    IdeaGenerationRequest:
+      type: object
+      properties:
+        domain:
+          type: string
+        problemArea:
+          type: string
+        constraints:
+          type: array
+          items:
+            type: string
+        userPreferences:
+          type: object
+          additionalProperties: true
+      required:
+        - domain
+    
+    IdeaGenerationResponse:
+      type: object
+      properties:
+        ideas:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              problemStatement:
+                type: string
+              potentialMarkets:
+                type: array
+                items:
+                  type: string
+              preliminaryScore:
+                type: number
+                format: float
+      required:
+        - ideas
+
+    MarketInsight:
+      type: object
+      properties:
+        location:
+          type: string
+        problems:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              severity:
+                type: number
+                format: float
+              opportunities:
+                type: array
+                items:
+                  type: string
+        demographics:
+          type: object
+          additionalProperties: true
+        competitorCount:
+          type: integer
+      required:
+        - location
+        - problems
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ideaId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [businessPlan, pitchDeck, executiveSummary, marketAnalysis]
+        content:
+          type: string
+        format:
+          type: string
+          enum: [markdown, pdf, docx]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ideaId
+        - type
+        - content
+        - format
+
+security:
+  - BasicAuth: []
+
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+
+  /auth/register:
+    post:
+      summary: Register new user
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input or user already exists
+
+  /users/me:
+    get:
+      summary: Get current user profile
+      tags:
+        - Users
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /ideas:
+    get:
+      summary: List all ideas for the authenticated user
+      tags:
+        - Ideas
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [draft, active, archived]
+          description: Filter ideas by status
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+          description: Maximum number of ideas to return
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Number of ideas to skip
+      responses:
+        '200':
+          description: List of ideas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Idea'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+    
+    post:
+      summary: Create a new idea
+      tags:
+        - Ideas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                problemStatement:
+                  type: string
+                targetMarket:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - title
+      responses:
+        '201':
+          description: Idea created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Idea'
+        '400':
+          description: Invalid input
+
+  /ideas/{ideaId}:
+    parameters:
+      - in: path
+        name: ideaId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: ID of the idea
+    
+    get:
+      summary: Get idea by ID
+      tags:
+        - Ideas
+      responses:
+        '200':
+          description: Idea details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Idea'
+        '404':
+          description: Idea not found
+    
+    put:
+      summary: Update an idea
+      tags:
+        - Ideas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                problemStatement:
+                  type: string
+                targetMarket:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, active, archived]
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Idea updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Idea'
+        '400':
+          description: Invalid input
+        '404':
+          description: Idea not found
+    
+    delete:
+      summary: Delete an idea
+      tags:
+        - Ideas
+      responses:
+        '204':
+          description: Idea deleted
+        '404':
+          description: Idea not found
+
+  /ideas/{ideaId}/validate:
+    parameters:
+      - in: path
+        name: ideaId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: ID of the idea to validate
+    
+    post:
+      summary: Validate an idea
+      tags:
+        - Idea Validation
+      responses:
+        '200':
+          description: Validation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '404':
+          description: Idea not found
+
+  /ideas/generate:
+    post:
+      summary: Generate new idea suggestions
+      tags:
+        - Idea Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdeaGenerationRequest'
+      responses:
+        '200':
+          description: Generated ideas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdeaGenerationResponse'
+        '400':
+          description: Invalid input
+
+  /ideas/refine:
+    post:
+      summary: Refine an existing idea
+      tags:
+        - Idea Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ideaId:
+                  type: string
+                  format: uuid
+                refinementGoal:
+                  type: string
+                  enum: [marketFit, feasibility, innovation, monetization]
+                constraints:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - ideaId
+                - refinementGoal
+      responses:
+        '200':
+          description: Refined idea suggestions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  originalIdea:
+                    $ref: '#/components/schemas/Idea'
+                  refinements:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        aspect:
+                          type: string
+                        suggestion:
+                          type: string
+                        reasoning:
+                          type: string
+        '404':
+          description: Idea not found
+
+  /market/insights:
+    get:
+      summary: Get market insights for a location
+      tags:
+        - Market Research
+      parameters:
+        - in: query
+          name: location
+          schema:
+            type: string
+          required: true
+          description: Location to get insights for
+        - in: query
+          name: domain
+          schema:
+            type: string
+          description: Optional industry domain filter
+      responses:
+        '200':
+          description: Market insights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketInsight'
+        '400':
+          description: Invalid location
+
+  /ideas/{ideaId}/documents:
+    parameters:
+      - in: path
+        name: ideaId
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: ID of the idea
+        
+    get:
+      summary: List documents for an idea
+      tags:
+        - Documents
+      responses:
+        '200':
+          description: List of documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '404':
+          description: Idea not found
+          
+    post:
+      summary: Generate a new document for an idea
+      tags:
+        - Documents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [businessPlan, pitchDeck, executiveSummary, marketAnalysis]
+                format:
+                  type: string
+                  enum: [markdown, pdf, docx]
+              required:
+                - type
+                - format
+      responses:
+        '201':
+          description: Document created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Invalid input
+        '404':
+          description: Idea not found
