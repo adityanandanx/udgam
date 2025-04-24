@@ -1,4 +1,5 @@
 import axios from "axios";
+import { handleApiError } from "./handle-api-error";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL, // your backend
@@ -12,6 +13,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log("SERVER ERROR: ", error);
+    handleApiError(error);
     return Promise.reject(error);
   }
 );

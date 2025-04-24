@@ -28,11 +28,9 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <main className="p-8">
-          <SidebarTrigger className="" />
-          {children}
-        </main>
+      <SidebarInset className="p-6">
+        <SidebarTrigger className="mb-10" variant={"secondary"} />
+        <main className="">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
