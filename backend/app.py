@@ -29,7 +29,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     # Initialize extensions
-    # CORS(app, origins=["*"])
+    CORS(app, origins=["*"], supports_credentials=True)
     db.init_app(app)
     migrate = Migrate(app, db)
 
