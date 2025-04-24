@@ -15,6 +15,12 @@ export type RegisterPayload = {
   lastName?: string;
 };
 
+export type UserProfile = {
+  firstName?: string;
+  lastName?: string;
+  username: string;
+};
+
 // Custom error handler
 const handleApiError = (error: unknown) => {
   if (isAxiosError(error)) {
@@ -59,7 +65,9 @@ export const register = async (data: RegisterPayload) => {
   }
 };
 
-export const getProfile = async (token: string) => {
+export const getProfile = async (
+  token: string
+): Promise<UserProfile | undefined> => {
   try {
     const res = await axios.get("/users/me", {
       headers: { Authorization: `Bearer ${token}` },
