@@ -1,22 +1,22 @@
 import { cn } from "@/lib/utils";
 import {
+  CheckIcon,
   ChevronsUpDown,
-  LightbulbIcon,
-  LogOutIcon,
-  User2Icon,
+  ExternalLinkIcon,
+  WatchIcon,
 } from "lucide-react";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "../ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "../ui/sidebar";
 
 export const IdeaSwitcher = () => {
   const { open } = useSidebar();
@@ -31,7 +31,7 @@ export const IdeaSwitcher = () => {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <LightbulbIcon />
+                  <WatchIcon />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Nibhay</span>
@@ -46,12 +46,18 @@ export const IdeaSwitcher = () => {
               })}
             >
               <DropdownMenuItem>
-                <User2Icon />
-                <span>Account</span>
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <WatchIcon size={32} />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Nibhay</span>
+                </div>
+                <CheckIcon className="ml-auto" />
               </DropdownMenuItem>
+
               <DropdownMenuItem onClick={() => {}}>
-                <LogOutIcon />
-                <span>Sign out</span>
+                <ExternalLinkIcon />
+                <span>View all</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

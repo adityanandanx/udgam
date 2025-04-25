@@ -9,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import AccountActions from "./account-actions";
@@ -45,13 +44,13 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const side = useSidebar();
+  // const side = useSidebar();
 
   return (
     <>
-      <pre className="bg-red-500 absolute bottom-0 right-0 z-50">
+      {/* <pre className="bg-red-500 absolute bottom-0 right-0 z-50">
         {JSON.stringify(side, null, 2)}
-      </pre>
+      </pre> */}
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
           <IdeaSwitcher />
