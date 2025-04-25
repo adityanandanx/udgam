@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-import { Node } from "./graph";
-import { Grid } from "./utils/Grid";
-import { createVector2 } from "./utils/Vector2";
-import { GRID_SIZE, RED_SQUARE_SIZE } from "./utils/constants";
+import { Grid } from "../utils/Grid";
+import { createVector2 } from "../utils/Vector2";
+import { GRID_SIZE, RED_SQUARE_SIZE } from "../utils/constants";
 import { useControls } from "./use-controls";
 
 /**
@@ -10,7 +9,7 @@ import { useControls } from "./use-controls";
  */
 export const useDraw = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rootNode = useRef<Node>(Node.createSampleNodes());
+  // const rootNode = useRef<Node>(Node.createSampleNodes());
   const {
     mousePosition,
     scrollDelta,
@@ -84,7 +83,7 @@ export const useDraw = () => {
       ctx.closePath();
 
       // Draw the node graph
-      rootNode.current.drawAll(ctx);
+      // rootNode.current.drawAll(ctx);
 
       // Reset scroll delta after rendering
       scrollDelta.current.x = 0;

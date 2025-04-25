@@ -6,8 +6,8 @@ export class Node {
   public width = 180;
   public height = 60;
   public padding = 10;
-  public horizontalGap = 50;
-  public verticalGap = 30;
+  public horizontalGap = 50; // Now acts as gap between parent and child
+  public verticalGap = 30; // Now acts as gap between siblings
   public color = "#0f62fe";
   public textColor = "#FFFFFF";
   public fontSize = 16;
@@ -95,19 +95,19 @@ export class Node {
       ctx.lineWidth = 2;
       ctx.beginPath();
 
-      // Start from the bottom center of this node
-      const startX = this.x + this.width / 2;
-      const startY = this.y + this.height;
+      // Start from the right center of this node
+      const startX = this.x + this.width;
+      const startY = this.y + this.height / 2;
 
-      // End at the top center of the child node
-      const endX = child.x + child.width / 2;
-      const endY = child.y;
+      // End at the left center of the child node
+      const endX = child.x;
+      const endY = child.y + child.height / 2;
 
       // Create a curved path between nodes
-      const controlPointY = (startY + endY) / 2;
+      const controlPointX = (startX + endX) / 2;
 
       ctx.moveTo(startX, startY);
-      ctx.bezierCurveTo(startX, controlPointY, endX, controlPointY, endX, endY);
+      ctx.bezierCurveTo(controlPointX, startY, controlPointX, endY, endX, endY);
 
       ctx.stroke();
     }
@@ -120,8 +120,8 @@ export class Node {
 
   positionNodes(depth = 0, index = 0) {
     // First position all children recursively to know their sizes
-    let totalChildrenWidth = 0;
-    let maxChildHeight = 0;
+    let maxChildWidth = 0;
+    let totalChildrenHeight = 0;
 
     // Position children first to calculate their dimensions
     for (let i = 0; i < this.children.length; i++) {
@@ -129,50 +129,50 @@ export class Node {
       child.positionNodes(depth + 1, i);
 
       if (i > 0) {
-        totalChildrenWidth += this.horizontalGap;
+        totalChildrenHeight += this.verticalGap;
       }
 
-      totalChildrenWidth += child.getTotalWidth();
-      maxChildHeight = Math.max(maxChildHeight, child.getTotalHeight());
+      totalChildrenHeight += child.getTotalHeight();
+      maxChildWidth = Math.max(maxChildWidth, child.getTotalWidth());
     }
 
     // Set this node's position based on index if it has a parent
     if (this.parent) {
       const siblings = this.parent.children;
-      let xOffset = 0;
+      let yOffset = 0;
 
       for (let i = 0; i < index; i++) {
-        xOffset += siblings[i].getTotalWidth() + this.horizontalGap;
+        yOffset += siblings[i].getTotalHeight() + this.verticalGap;
       }
 
-      this.x = this.parent.x + xOffset;
-      this.y = this.parent.y + this.parent.height + this.verticalGap;
+      this.x = this.parent.x + this.parent.width + this.horizontalGap;
+      this.y = this.parent.y + yOffset;
     }
 
-    return { width: totalChildrenWidth, height: maxChildHeight };
+    return { width: maxChildWidth, height: totalChildrenHeight };
   }
 
   centerChildren() {
     if (this.children.length === 0) return;
 
-    // Get total width of all children
-    let totalWidth = 0;
+    // Get total height of all children
+    let totalHeight = 0;
     for (let i = 0; i < this.children.length; i++) {
-      totalWidth += this.children[i].getTotalWidth();
-      if (i > 0) totalWidth += this.horizontalGap;
+      totalHeight += this.children[i].getTotalHeight();
+      if (i > 0) totalHeight += this.verticalGap;
     }
 
-    // Calculate starting x position to center children under the parent
-    const startX = this.x + (this.width - totalWidth) / 2;
+    // Calculate starting y position to center children next to the parent
+    const startY = this.y + (this.height - totalHeight) / 2;
 
     // Position each child
-    let currentX = startX;
+    let currentY = startY;
     for (const child of this.children) {
-      const childWidth = child.getTotalWidth();
-      const offset = (childWidth - child.width) / 2;
+      const childHeight = child.getTotalHeight();
+      const offset = (childHeight - child.height) / 2;
 
-      child.x = currentX + offset;
-      currentX += childWidth + this.horizontalGap;
+      child.y = currentY + offset;
+      currentY += childHeight + this.verticalGap;
 
       // Recursively center each child's children
       child.centerChildren();
@@ -182,24 +182,24 @@ export class Node {
   getTotalWidth() {
     if (this.children.length === 0) return this.width;
 
-    let totalChildrenWidth = 0;
-    for (let i = 0; i < this.children.length; i++) {
-      if (i > 0) totalChildrenWidth += this.horizontalGap;
-      totalChildrenWidth += this.children[i].getTotalWidth();
+    let maxChildWidth = 0;
+    for (const child of this.children) {
+      maxChildWidth = Math.max(maxChildWidth, child.getTotalWidth());
     }
 
-    return Math.max(this.width, totalChildrenWidth);
+    return this.width + this.horizontalGap + maxChildWidth;
   }
 
   getTotalHeight() {
     if (this.children.length === 0) return this.height;
 
-    let maxChildHeight = 0;
-    for (const child of this.children) {
-      maxChildHeight = Math.max(maxChildHeight, child.getTotalHeight());
+    let totalChildrenHeight = 0;
+    for (let i = 0; i < this.children.length; i++) {
+      if (i > 0) totalChildrenHeight += this.verticalGap;
+      totalChildrenHeight += this.children[i].getTotalHeight();
     }
 
-    return this.height + this.verticalGap + maxChildHeight;
+    return Math.max(this.height, totalChildrenHeight);
   }
 
   drawAll(ctx: CanvasRenderingContext2D) {
@@ -228,7 +228,9 @@ export class Node {
     const child1 = root.createAndAddChild("Child 1");
     const child2 = root.createAndAddChild("Child 2");
     const child3 = root.createAndAddChild("Child 2");
-    const grandchild1 = child1.createAndAddChild("Grandchild 1");
+    const grandchild1 = child1.createAndAddChild(
+      "Grandchild 1 hello world this is a very long text"
+    );
     const grandchild2 = child2.createAndAddChild("Grandchild 2");
     const grandchild3 = child2.createAndAddChild("Grandchild 3");
     return root;

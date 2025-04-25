@@ -1,11 +1,11 @@
 "use client";
-import { useDraw } from "@/hooks/idea-board/use-draw";
+
+import { IdeaFlow } from "@/components/idea-flow";
 
 const IdeaBoardPage = () => {
-  const { canvasRef, canvasProps } = useDraw();
   return (
-    <div className="w-full h-full">
-      <canvas ref={canvasRef} className="w-full h-full" {...canvasProps} />
+    <div className="w-full h-full absolute inset-0 z-0">
+      <IdeaFlow />
     </div>
   );
 };

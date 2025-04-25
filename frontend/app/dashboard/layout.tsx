@@ -28,8 +28,8 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="p-6 flex flex-col">
-        <SidebarTrigger className="mb-10" variant={"secondary"} />
+      <SidebarInset className="relative p-6 flex flex-col overflow-hidden">
+        <SidebarTrigger variant={"secondary"} className="z-10" />
         <main className="flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>

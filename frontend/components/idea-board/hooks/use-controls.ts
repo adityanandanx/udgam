@@ -1,12 +1,12 @@
 import { MouseEvent, RefObject, useEffect, useRef } from "react";
-import { Vector2, createVector2 } from "./utils/Vector2";
+import { Vector2, createVector2 } from "../utils/Vector2";
 import {
   DRAG_SENSITIVITY,
   MAX_SCALE,
   MIN_SCALE,
   SCALE_CHANGE_RATE,
   SCROLL_SMOOTHING,
-} from "./utils/constants";
+} from "../utils/constants";
 
 /**
  * Hook to handle canvas controls like zooming, panning, and mouse interaction
