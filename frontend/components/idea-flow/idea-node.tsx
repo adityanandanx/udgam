@@ -24,8 +24,8 @@ export function IdeaNode({ id, data, dragging }: NodeProps<IdeaNode>) {
 
   return (
     <BaseNode className="min-w-[256px] p-0">
-      <div className="flex gap-2 w-full items-center justify-center pl-2">
-        <div className="dragHandle">
+      <div className="flex w-full items-center justify-center">
+        <div className="dragHandle px-2">
           <GripVerticalIcon className="text-muted-foreground" size={16} />
         </div>
         <Input

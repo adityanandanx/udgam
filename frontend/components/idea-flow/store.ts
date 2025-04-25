@@ -20,6 +20,7 @@ export type RFState = {
   onEdgesChange: OnEdgesChange;
   updateNodeLabel: (nodeId: string, label: string) => void;
   addChildNode: (parentNode: InternalNode, position: XYPosition) => void;
+  arrangeNodesHorizontally: () => void;
 };
 
 const useStore = create<RFState>((set, get) => ({
@@ -78,6 +79,57 @@ const useStore = create<RFState>((set, get) => ({
       nodes: [...get().nodes, newNode],
       edges: [...get().edges, newEdge],
     });
+  },
+  arrangeNodesHorizontally: () => {
+    const { nodes, edges } = get();
+    const rootNode = nodes.find((node) => node.id === "root");
+    if (!rootNode) return;
+
+    const HORIZONTAL_GAP = 300;
+    const VERTICAL_GAP = 100;
+
+    // Build parent -> children map
+    const childrenMap = new Map<string, string[]>();
+    nodes.forEach((node) => childrenMap.set(node.id, []));
+    edges.forEach((edge) => {
+      const list = childrenMap.get(edge.source) || [];
+      list.push(edge.target);
+      childrenMap.set(edge.source, list);
+    });
+
+    const positions = new Map<string, { x: number; y: number }>();
+    positions.set("root", { x: 0, y: 0 });
+
+    const rootChildren = childrenMap.get("root") || [];
+
+    let currentY = 0;
+    rootChildren.forEach((id) => {
+      const x = HORIZONTAL_GAP;
+      const y = currentY;
+      positions.set(id, { x, y });
+      layoutSubtree(id, x, y);
+      currentY += VERTICAL_GAP;
+    });
+
+    function layoutSubtree(nodeId: string, parentX: number, startY: number) {
+      const children = childrenMap.get(nodeId) || [];
+      let currentY = startY;
+      children.forEach((childId) => {
+        const x = parentX + HORIZONTAL_GAP;
+        const y = currentY;
+        positions.set(childId, { x, y });
+        layoutSubtree(childId, x, y);
+        currentY += VERTICAL_GAP;
+      });
+    }
+
+    // Apply updated positions
+    const newNodes = nodes.map((node) => {
+      const pos = positions.get(node.id);
+      return pos ? { ...node, position: pos } : node;
+    });
+
+    set({ nodes: newNodes });
   },
 }));
 

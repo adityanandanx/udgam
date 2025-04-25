@@ -1,26 +1,29 @@
-import { useCallback, useRef } from "react";
 import {
-  ReactFlow,
+  Background,
+  BackgroundVariant,
   ConnectionLineType,
+  Controls,
+  DefaultEdgeOptions,
+  InternalNode,
   NodeOrigin,
   OnConnectEnd,
   OnConnectStart,
+  Panel,
+  ReactFlow,
+  ReactFlowProvider,
   useReactFlow,
   useStoreApi,
-  Controls,
-  Panel,
-  InternalNode,
-  ReactFlowProvider,
-  DefaultEdgeOptions,
 } from "@xyflow/react";
+import { useCallback, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import useStore, { RFState } from "./store";
 
 // we need to import the React Flow styles to make it work
 import "@xyflow/react/dist/style.css";
-import { IdeaNode } from "./idea-node";
 import { IdeaEdge } from "./idea-edge";
+import { IdeaNode } from "./idea-node";
+import { Button } from "../ui/button";
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -28,6 +31,7 @@ const selector = (state: RFState) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   addChildNode: state.addChildNode,
+  arrangeNodesHorizontally: state.arrangeNodesHorizontally,
 });
 
 const nodeTypes = {
@@ -51,9 +55,14 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 
 function Flow() {
   const store = useStoreApi();
-  const { nodes, edges, onNodesChange, onEdgesChange, addChildNode } = useStore(
-    useShallow(selector)
-  );
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    addChildNode,
+    arrangeNodesHorizontally,
+  } = useStore(useShallow(selector));
   const { screenToFlowPosition } = useReactFlow();
   const connectingNodeId = useRef<string | null>(null);
 
@@ -131,13 +140,25 @@ function Flow() {
       nodeOrigin={nodeOrigin}
       defaultEdgeOptions={defaultEdgeOptions}
       connectionLineStyle={connectionLineStyle}
-      connectionLineType={ConnectionLineType.Straight}
+      connectionLineType={ConnectionLineType.Bezier}
+      snapToGrid
+      snapGrid={[32, 32]}
       fitView
       colorMode="dark"
     >
+      <Background gap={32} variant={BackgroundVariant.Cross} />
       <Controls showInteractive={false} />
-      <Panel position="top-right" className="">
+      <Panel position="top-center" className="">
         Nirbhay mind map
+      </Panel>
+      <Panel
+        position="top-right"
+        className="overflow-y-auto max-h-[80vh] bg-background/80 rounded-md p-10 text-xs"
+      >
+        <pre>{JSON.stringify(nodes, null, 2)}</pre>
+      </Panel>
+      <Panel position="bottom-center">
+        <Button onClick={() => arrangeNodesHorizontally()}>Arrange</Button>
       </Panel>
     </ReactFlow>
   );
