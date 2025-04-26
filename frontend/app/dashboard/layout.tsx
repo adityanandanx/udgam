@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import DashboardSkeleton from "@/components/skeletons/dashboard-skeleton";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/api-hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
@@ -16,7 +16,8 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
     }
   }, [data, isPending, router]);
 
-  if (isLoading || !data) return <DashboardSkeleton />;
+  if (isLoading) return <DashboardSkeleton />;
+  if (!data) redirect("/login");
 
   return (
     <>

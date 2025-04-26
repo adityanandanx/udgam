@@ -33,7 +33,7 @@ const items = [
   },
   {
     title: "Geo Map",
-    url: "/dashboard/geo-map",
+    url: "/geo-map",
     icon: Globe,
   },
   // {

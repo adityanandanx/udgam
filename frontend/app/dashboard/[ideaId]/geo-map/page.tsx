@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  MapMouseEvent,
-  MapControl,
-  ControlPosition,
-} from "@vis.gl/react-google-maps";
-import { Circle } from "../../../components/geo-map/circle";
 import { useGeoStore } from "@/components/geo-map/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AdvancedMarker,
+  APIProvider,
+  ControlPosition,
+  Map,
+  MapMouseEvent,
+  Pin,
+} from "@vis.gl/react-google-maps";
+import { useCallback, useState } from "react";
+import { Circle } from "../../../../components/geo-map/circle";
 
 const getMockIdeas = (lat: number, lng: number) => {
   return [
@@ -40,10 +39,6 @@ export default function FeatureTwo() {
 
   const { lat, lng, setLocation, ideas, setIdeas } = useGeoStore();
   const [open, setOpen] = useState(false);
-  const [clickedPosition, setClickedPosition] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
 
   const [circleCenter, setCircleCenter] =
     useState<google.maps.LatLngLiteral | null>(null);
@@ -55,7 +50,6 @@ export default function FeatureTwo() {
         const newLng = e.detail.latLng.lng;
 
         const newCenter = { lat: newLat, lng: newLng };
-        setClickedPosition(newCenter);
         setCircleCenter(newCenter);
 
         setLocation(newLat, newLng);
@@ -80,9 +74,9 @@ export default function FeatureTwo() {
           // controlled={false}
           mapTypeControlOptions={{ position: ControlPosition.BOTTOM_LEFT }}
         >
-          {clickedPosition && (
+          {lat && lng && (
             <>
-              <AdvancedMarker position={clickedPosition}>
+              <AdvancedMarker position={{ lat, lng }}>
                 <Pin
                   background={"var(--color-destructive)"}
                   borderColor={"var(--color-secondary)"}
@@ -107,7 +101,7 @@ export default function FeatureTwo() {
         </Map>
       </APIProvider>
 
-      {open && clickedPosition && (
+      {open && lat && lng && (
         <Card className="absolute top-4 right-4 max-w-md">
           <CardHeader>
             <CardTitle className="text-lg font-bold p-0">
