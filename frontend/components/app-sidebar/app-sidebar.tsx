@@ -9,11 +9,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 import { Home, StarIcon } from "lucide-react";
 import Link from "next/link";
-import AccountActions from "./account-actions";
-import { IdeaSwitcher } from "./idea-switcher";
+import AccountActions, { AccountActionsSkeleton } from "./account-actions";
+import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
 
 // Menu items.
 const items = [
@@ -77,6 +78,43 @@ export function AppSidebar() {
         </SidebarContent>
         <SidebarFooter>
           <AccountActions />
+        </SidebarFooter>
+      </Sidebar>
+    </>
+  );
+}
+
+export function AppSidebarSkeleton() {
+  return (
+    <>
+      <Sidebar variant="inset" collapsible="icon">
+        <SidebarHeader>
+          <IdeaSwitcherSkeleton />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>
+              <SidebarMenuSkeleton height={8} width={"100%"} />
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      {/* <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link> */}
+                      <SidebarMenuSkeleton showIcon />
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <AccountActionsSkeleton />
         </SidebarFooter>
       </Sidebar>
     </>
