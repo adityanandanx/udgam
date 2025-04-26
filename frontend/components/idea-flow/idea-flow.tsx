@@ -20,10 +20,12 @@ import { useShallow } from "zustand/react/shallow";
 import useStore, { RFState } from "./store";
 
 // we need to import the React Flow styles to make it work
+import { IdeaResponse } from "@/lib/api/ideas";
 import "@xyflow/react/dist/style.css";
+import { Button } from "../ui/button";
 import { IdeaEdge } from "./idea-edge";
 import { IdeaNode } from "./idea-node";
-import { Button } from "../ui/button";
+import { TIdeaNode } from "./types";
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -53,7 +55,7 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "mindmap",
 };
 
-function Flow() {
+function Flow({ idea }: { idea: IdeaResponse }) {
   const store = useStoreApi();
   const {
     nodes,
@@ -129,8 +131,10 @@ function Flow() {
 
   return (
     <ReactFlow
-      nodes={nodes}
-      edges={edges}
+      // nodes={nodes}
+      // edges={edges}
+      defaultNodes={idea.nodes}
+      defaultEdges={idea.edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnectStart={onConnectStart}
@@ -164,10 +168,10 @@ function Flow() {
   );
 }
 
-export const IdeaFlow = () => {
+export const IdeaFlow = ({ idea }: { idea: IdeaResponse }) => {
   return (
     <ReactFlowProvider>
-      <Flow />
+      <Flow idea={idea} />
     </ReactFlowProvider>
   );
 };

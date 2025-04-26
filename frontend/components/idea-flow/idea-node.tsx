@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   Handle,
   NodeProps,
@@ -5,21 +6,20 @@ import {
   useKeyPress,
   useReactFlow,
 } from "@xyflow/react";
-import { GripVerticalIcon, Trash2Icon, XIcon } from "lucide-react";
+import { GripVerticalIcon, XIcon } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { BaseNode } from "../base-node";
+import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import useStore from "./store";
-import { type IdeaNode } from "./types";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
+import { type TIdeaNode } from "./types";
 
 export function IdeaNode({
   id,
   data,
   dragging,
   selected,
-}: NodeProps<IdeaNode>) {
+}: NodeProps<TIdeaNode>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const deleteBtnPressed = useKeyPress("Delete");
   const updateNodeLabel = useStore((state) => state.updateNodeLabel);

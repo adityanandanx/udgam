@@ -11,12 +11,12 @@ import {
 } from "@xyflow/react";
 import { create } from "zustand";
 import { nanoid } from "nanoid/non-secure";
-import { IdeaNode } from "./types";
+import { TIdeaNode } from "./types";
 
 export type RFState = {
-  nodes: IdeaNode[];
+  nodes: TIdeaNode[];
   edges: Edge[];
-  onNodesChange: OnNodesChange<IdeaNode>;
+  onNodesChange: OnNodesChange<TIdeaNode>;
   onEdgesChange: OnEdgesChange;
   updateNodeLabel: (nodeId: string, label: string) => void;
   addChildNode: (parentNode: InternalNode, position: XYPosition) => void;
@@ -34,9 +34,9 @@ const useStore = create<RFState>((set, get) => ({
     },
   ],
   edges: [],
-  onNodesChange: (changes: NodeChange<IdeaNode>[]) => {
+  onNodesChange: (changes: NodeChange<TIdeaNode>[]) => {
     set({
-      nodes: applyNodeChanges<IdeaNode>(changes, get().nodes),
+      nodes: applyNodeChanges<TIdeaNode>(changes, get().nodes),
     });
   },
   onEdgesChange: (changes: EdgeChange[]) => {
@@ -60,7 +60,7 @@ const useStore = create<RFState>((set, get) => ({
     });
   },
   addChildNode: (parentNode: InternalNode, position: XYPosition) => {
-    const newNode: IdeaNode = {
+    const newNode: TIdeaNode = {
       id: nanoid(),
       type: "mindmap",
       data: { label: "New Node" },
