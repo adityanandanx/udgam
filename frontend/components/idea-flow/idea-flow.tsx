@@ -128,17 +128,19 @@ function Flow({ idea }: { idea: IdeaResponse }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="py-0 border-none">
+              Unsaved Changes
+            </AlertDialogTitle>
+            <AlertDialogDescription className="mt-0">
               You have unsaved changes that will be lost if you leave this page.
               Do you want to save your changes before continuing?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Stay on Page</AlertDialogCancel>
             <AlertDialogAction asChild onClick={proceedNavigation}>
               <Button variant={"destructive"}>Leave Without Saving</Button>
             </AlertDialogAction>
+            <AlertDialogCancel>Stay on Page</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
