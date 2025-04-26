@@ -1,9 +1,12 @@
 import {
   createIdea,
   CreateIdeaPayload,
+  deleteIdea,
   getIdea,
   getIdeas,
   IdeaResponse,
+  updateIdea,
+  UpdateIdeaPayload,
 } from "@/lib/api/ideas";
 import {
   useMutation,
@@ -52,14 +55,25 @@ export const useCreateIdea = ({
   });
 };
 
-export const useUpdateIdea = () => {
+export const useUpdateIdea = ({
+  onSuccess,
+  ...options
+}: UseMutationOptions<
+  IdeaResponse,
+  Error,
+  { id: string; data: UpdateIdeaPayload },
+  unknown
+> = {}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createIdea,
-    onSuccess: () => {
+    mutationFn: ({ id, data }) => updateIdea(id, data),
+    onSuccess: (data, variables, ctx) => {
       queryClient.invalidateQueries({ queryKey: ["ideas"] });
+      queryClient.invalidateQueries({ queryKey: ["ideas", variables.id] });
+      onSuccess?.(data, variables, ctx);
     },
+    ...options,
   });
 };
 
@@ -67,7 +81,7 @@ export const useDeleteIdea = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createIdea,
+    mutationFn: deleteIdea,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ideas"] });
     },

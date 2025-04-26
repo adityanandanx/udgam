@@ -1,11 +1,12 @@
 "use client";
 
-import { IdeaFlow } from "@/components/idea-flow";
+import CreateIdeaForm from "@/components/idea-flow/create-idea-form";
 
 const IdeaBoardPage = () => {
   return (
-    <div className="w-full h-full absolute inset-0 z-0">
-      {/* <IdeaFlow /> */}
+    <div className="max-w-2xl mx-auto">
+      <h1>Create a new idea</h1>
+      <CreateIdeaForm />
     </div>
   );
 };

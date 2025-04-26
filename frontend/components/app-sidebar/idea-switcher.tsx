@@ -16,6 +16,7 @@ import {
   SidebarMenuSkeleton,
   useSidebar,
 } from "../ui/sidebar";
+import Link from "next/link";
 
 export const IdeaSwitcher = () => {
   const { open } = useSidebar();
@@ -27,9 +28,6 @@ export const IdeaSwitcher = () => {
 
   return (
     <SidebarMenu>
-      <pre className="text-xs p-10 absolute left-full">
-        {JSON.stringify(data, null, 2)}
-      </pre>
       <SidebarMenuItem className="flex items-end">
         <div className="flex flex-col gap-2 w-full">
           <Dialog>
@@ -54,20 +52,21 @@ export const IdeaSwitcher = () => {
                   "w-[224px] ml-0": open,
                 })}
               >
-                <DropdownMenuItem>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <WatchIcon size={32} />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Nibhay</span>
-                  </div>
-                  <CheckIcon className="ml-auto" />
-                </DropdownMenuItem>
-
-                {/* <DropdownMenuItem onClick={() => {}}>
-                <ExternalLinkIcon />
-                <span>View all</span>
-              </DropdownMenuItem> */}
+                {data.map((idea) => (
+                  <Link key={idea.id} href={`/dashboard/idea-board/${idea.id}`}>
+                    <DropdownMenuItem key={idea.id}>
+                      <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                        <WatchIcon size={32} />
+                      </div>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {idea.title}
+                        </span>
+                      </div>
+                      <CheckIcon className="ml-auto" />
+                    </DropdownMenuItem>
+                  </Link>
+                ))}
 
                 <DialogTrigger asChild>
                   <DropdownMenuItem>

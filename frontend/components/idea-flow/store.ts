@@ -21,19 +21,26 @@ export type RFState = {
   updateNodeLabel: (nodeId: string, label: string) => void;
   addChildNode: (parentNode: InternalNode, position: XYPosition) => void;
   arrangeNodesHorizontally: () => void;
+  getCurrentState: () => { nodes: TIdeaNode[]; edges: Edge[] };
+  initializeWithData: (nodes: TIdeaNode[], edges: Edge[]) => void;
 };
 
-const useStore = create<RFState>((set, get) => ({
+// Default initial data
+const defaultInitialState = {
   nodes: [
     {
       id: "root",
-      type: "mindmap",
+      type: "mindmap" as const,
       data: { label: "React Flow Mind Map" },
       position: { x: 0, y: 0 },
       dragHandle: ".dragHandle",
     },
   ],
   edges: [],
+};
+
+const useStore = create<RFState>((set, get) => ({
+  ...defaultInitialState,
   onNodesChange: (changes: NodeChange<TIdeaNode>[]) => {
     set({
       nodes: applyNodeChanges<TIdeaNode>(changes, get().nodes),
@@ -130,6 +137,15 @@ const useStore = create<RFState>((set, get) => ({
     });
 
     set({ nodes: newNodes });
+  },
+  getCurrentState: () => {
+    return {
+      nodes: get().nodes,
+      edges: get().edges,
+    };
+  },
+  initializeWithData: (nodes: TIdeaNode[], edges: Edge[]) => {
+    set({ nodes, edges });
   },
 }));
 

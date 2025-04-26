@@ -14,18 +14,20 @@ import {
   useReactFlow,
   useStoreApi,
 } from "@xyflow/react";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import useStore, { RFState } from "./store";
 
 // we need to import the React Flow styles to make it work
+import { useUpdateIdea } from "@/hooks/api-hooks/use-ideas";
 import { IdeaResponse } from "@/lib/api/ideas";
 import "@xyflow/react/dist/style.css";
+import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { IdeaEdge } from "./idea-edge";
 import { IdeaNode } from "./idea-node";
-import { TIdeaNode } from "./types";
+import DebugPanel from "./debug-panel";
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -34,6 +36,8 @@ const selector = (state: RFState) => ({
   onEdgesChange: state.onEdgesChange,
   addChildNode: state.addChildNode,
   arrangeNodesHorizontally: state.arrangeNodesHorizontally,
+  getCurrentState: state.getCurrentState,
+  initializeWithData: state.initializeWithData,
 });
 
 const nodeTypes = {
@@ -64,9 +68,43 @@ function Flow({ idea }: { idea: IdeaResponse }) {
     onEdgesChange,
     addChildNode,
     arrangeNodesHorizontally,
+    getCurrentState,
+    initializeWithData,
   } = useStore(useShallow(selector));
+
   const { screenToFlowPosition } = useReactFlow();
   const connectingNodeId = useRef<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const updateIdeaMutation = useUpdateIdea({
+    onSuccess: () => {
+      setIsSaving(false);
+    },
+    onError: () => {
+      setIsSaving(false);
+    },
+  });
+
+  // Initialize store with idea data
+  useEffect(() => {
+    if (idea && idea.nodes && idea.edges) {
+      initializeWithData(idea.nodes, idea.edges);
+    }
+  }, [idea, initializeWithData]);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    const { nodes, edges } = getCurrentState();
+    updateIdeaMutation.mutate({
+      id: idea.id,
+      data: {
+        title: idea.title,
+        short_desc: idea.short_desc,
+        nodes,
+        edges,
+      },
+    });
+  };
 
   const getChildNodePosition = (
     event: MouseEvent | TouchEvent,
@@ -131,10 +169,8 @@ function Flow({ idea }: { idea: IdeaResponse }) {
 
   return (
     <ReactFlow
-      // nodes={nodes}
-      // edges={edges}
-      defaultNodes={idea.nodes}
-      defaultEdges={idea.edges}
+      nodes={nodes}
+      edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnectStart={onConnectStart}
@@ -153,17 +189,21 @@ function Flow({ idea }: { idea: IdeaResponse }) {
       <Background gap={32} variant={BackgroundVariant.Cross} />
       <Controls showInteractive={false} />
       <Panel position="top-center" className="">
-        Nirbhay mind map
+        {idea.title}
       </Panel>
-      <Panel
-        position="top-right"
-        className="overflow-y-auto max-h-[80vh] bg-background/80 rounded-md p-10 text-xs"
-      >
-        <pre>{JSON.stringify(nodes, null, 2)}</pre>
-      </Panel>
-      <Panel position="bottom-center">
+      <Panel position="bottom-center" className="flex gap-2">
         <Button onClick={() => arrangeNodesHorizontally()}>Arrange</Button>
+        <Button onClick={handleSave} disabled={isSaving}>
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+            </>
+          ) : (
+            "Save"
+          )}
+        </Button>
       </Panel>
+      <DebugPanel />
     </ReactFlow>
   );
 }
