@@ -47,7 +47,7 @@ export function IdeaNode({
     <BaseNode className="min-w-[256px] relative p-0 group">
       <div
         className={cn(
-          "absolute -z-10 top-full right-0 group-hover:translate-y-1 -translate-x-1 transition-transform -translate-y-full",
+          "absolute -z-10 top-full right-0 group-hover:translate-y-1 group-hover:opacity-100 -translate-x-1 transition-transform -translate-y-full opacity-50",
           {
             "-translate-y-1/2": selected,
             hidden: id === "root",
