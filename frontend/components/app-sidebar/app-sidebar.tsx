@@ -16,6 +16,7 @@ import Link from "next/link";
 import AccountActions, { AccountActionsSkeleton } from "./account-actions";
 import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
 import { useParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 // Menu items.
 // Must prefix the url with "/"
@@ -65,9 +66,14 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem
+                    className={cn("", { "opacity-50": !!!ideaId })}
+                    key={item.title}
+                  >
                     <SidebarMenuButton asChild>
-                      <Link href={`/dashboard/${ideaId}${item.url}`}>
+                      <Link
+                        href={ideaId ? `/dashboard/${ideaId}${item.url}` : ""}
+                      >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
