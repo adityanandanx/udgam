@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 const useBlockNavigation = (
@@ -16,21 +16,26 @@ const useBlockNavigation = (
   const lastLocationRef = useRef<string | null>(null);
 
   // Check if navigation to a specific URL is allowed
-  const canNavigate = (url: string) => {
-    try {
-      const { pathname: targetPath } = new URL(url, window.location.origin);
-      return (
-        !hasUnsavedChanges ||
-        allowedRoutes.some(
-          (route) => targetPath === route || targetPath.startsWith(route + "/")
-        ) ||
-        pathname === targetPath
-      );
-    } catch (e) {
-      // If URL parsing fails, default to requiring confirmation
-      return !hasUnsavedChanges;
-    }
-  };
+  const canNavigate = useCallback(
+    (url: string) => {
+      try {
+        const { pathname: targetPath } = new URL(url, window.location.origin);
+        return (
+          !hasUnsavedChanges ||
+          allowedRoutes.some(
+            (route) =>
+              targetPath === route || targetPath.startsWith(route + "/")
+          ) ||
+          pathname === targetPath
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_) {
+        // If URL parsing fails, default to requiring confirmation
+        return !hasUnsavedChanges;
+      }
+    },
+    [allowedRoutes, hasUnsavedChanges, pathname]
+  );
 
   // Handle router push override
   useEffect(() => {
@@ -54,7 +59,7 @@ const useBlockNavigation = (
     };
 
     // Override router.push
-    router.push = ((url: string, options?: any) => {
+    router.push = ((url: string) => {
       return handleNavigation(url);
     }) as typeof router.push;
 
@@ -64,7 +69,7 @@ const useBlockNavigation = (
         router.push = originalPushRef.current;
       }
     };
-  }, [hasUnsavedChanges, pathname, allowedRoutes, router]);
+  }, [hasUnsavedChanges, pathname, allowedRoutes, router, canNavigate]);
 
   // Handle Link component clicks
   useEffect(() => {
@@ -133,7 +138,7 @@ const useBlockNavigation = (
     // Store current location
     lastLocationRef.current = pathname;
 
-    const handlePopState = (event: PopStateEvent) => {
+    const handlePopState = () => {
       if (hasUnsavedChanges) {
         // Prevent the default back action
         history.pushState(null, "", window.location.href);
