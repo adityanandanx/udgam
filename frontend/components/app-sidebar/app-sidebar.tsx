@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, StarIcon } from "lucide-react";
+import { Globe, Home, StarIcon } from "lucide-react";
 import Link from "next/link";
 import AccountActions from "./account-actions";
 import { IdeaSwitcher } from "./idea-switcher";
@@ -27,11 +27,11 @@ const items = [
     url: "/dashboard/idea-board",
     icon: StarIcon,
   },
-  // {
-  //   title: "Calendar",
-  //   url: "#",
-  //   icon: Calendar,
-  // },
+  {
+    title: "Geo Map",
+    url: "/dashboard/geo-map",
+    icon: Globe,
+  },
   // {
   //   title: "Search",
   //   url: "#",
