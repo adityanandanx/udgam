@@ -1,14 +1,35 @@
-import { Handle, NodeProps, Position } from "@xyflow/react";
-import { GripVerticalIcon } from "lucide-react";
+import {
+  Handle,
+  NodeProps,
+  Position,
+  useKeyPress,
+  useReactFlow,
+} from "@xyflow/react";
+import { GripVerticalIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { BaseNode } from "../base-node";
 import { Input } from "../ui/input";
 import useStore from "./store";
 import { type IdeaNode } from "./types";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
-export function IdeaNode({ id, data, dragging }: NodeProps<IdeaNode>) {
+export function IdeaNode({
+  id,
+  data,
+  dragging,
+  selected,
+}: NodeProps<IdeaNode>) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const deleteBtnPressed = useKeyPress("Delete");
   const updateNodeLabel = useStore((state) => state.updateNodeLabel);
+  const { deleteElements } = useReactFlow();
+
+  useEffect(() => {
+    if (deleteBtnPressed && inputRef.current !== document.activeElement) {
+      deleteElements({ nodes: [{ id }] });
+    }
+  }, [deleteBtnPressed, deleteElements, id]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,7 +44,28 @@ export function IdeaNode({ id, data, dragging }: NodeProps<IdeaNode>) {
   }, [data.label.length]);
 
   return (
-    <BaseNode className="min-w-[256px] p-0">
+    <BaseNode className="min-w-[256px] relative p-0 group">
+      <div
+        className={cn(
+          "absolute -z-10 bottom-full right-0 group-hover:-translate-y-0 group-hover:opacity-100 -translate-x-0 transition-transform translate-y-full opacity-50",
+          {
+            "translate-y-1/2": selected,
+            hidden: id === "root",
+          }
+        )}
+      >
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          className="size-4"
+          aria-label="delete node"
+          onClick={() => {
+            deleteElements({ nodes: [{ id }] });
+          }}
+        >
+          <XIcon size={12} className="size-3" />
+        </Button>
+      </div>
       <div className="flex w-full items-center justify-center">
         <div className="dragHandle px-2">
           <GripVerticalIcon className="text-muted-foreground" size={16} />

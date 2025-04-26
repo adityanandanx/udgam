@@ -4,7 +4,7 @@ import { useUser } from "@/hooks/api-hooks/use-auth";
 export default function Dashboard() {
   const { data } = useUser();
   return (
-    <div className="">
+    <div className="mt-10">
       <h1>
         Welcome, <span className="capitalize">{data?.firstName}</span>
       </h1>
