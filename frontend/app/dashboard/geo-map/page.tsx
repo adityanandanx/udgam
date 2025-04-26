@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   APIProvider,
   Map,
   AdvancedMarker,
   Pin,
   MapMouseEvent,
-
 } from "@vis.gl/react-google-maps";
-// import { Circle  , Adva} from '@vis.gl/react-google-maps';
+import { Circle } from "../../../components/geo-map/circle";
 import { useGeoStore } from "@/components/geo-map/store";
-import { Background } from "@xyflow/react";
+
 
 const getMockIdeas = (lat: number, lng: number) => {
   return [
@@ -43,26 +42,29 @@ export default function FeatureTwo() {
     lng: number;
   } | null>(null);
 
+  const [circleCenter, setCircleCenter] = useState<google.maps.LatLngLiteral | null>(null);
 
-  const circleRadius = 5000;
-
-  const handleMapClick = (e: MapMouseEvent) => {
+  const handleMapClick = useCallback((e: MapMouseEvent) => {
     if (e.detail && e.detail.latLng) {
       const newLat = e.detail.latLng.lat;
       const newLng = e.detail.latLng.lng;
-      setClickedPosition({ lat: newLat, lng: newLng });
+
+      const newCenter = { lat: newLat, lng: newLng };
+      setClickedPosition(newCenter);
+      setCircleCenter(newCenter);
+      
       setLocation(newLat, newLng);
       setIdeas(getMockIdeas(newLat, newLng));
       setOpen(true);
     }
-  };
+  }, [setLocation, setIdeas]);
 
   return (
     <div className="relative">
       <APIProvider apiKey={apiKey}>
         <Map
           mapId={mapId}
-          style={{ width: "100vw", height: "400px" }}
+          style={{ width: "100vw", height: "90vh" }}
           defaultCenter={{ lat: 22.54992, lng: 0 }}
           defaultZoom={3}
           onClick={handleMapClick}
@@ -72,6 +74,18 @@ export default function FeatureTwo() {
               <AdvancedMarker position={clickedPosition}>
                 <Pin />
               </AdvancedMarker>
+
+              {circleCenter && (
+                <Circle
+                  center={circleCenter}
+                  radius={100000}
+                  strokeColor={'#0c4cb3'}
+                  strokeOpacity={1}
+                  strokeWeight={3}
+                  fillColor={'#3b82f6'}
+                  fillOpacity={0.3}
+                />
+              )}
             </>
           )}
         </Map>
