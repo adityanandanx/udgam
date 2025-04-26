@@ -1,47 +1,23 @@
-import {
-  Handle,
-  NodeProps,
-  Position,
-  useKeyPress,
-  useReactFlow,
-} from "@xyflow/react";
-import { GripVerticalIcon, Trash2Icon, XIcon } from "lucide-react";
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { BaseNode } from "../base-node";
-import { Input } from "../ui/input";
-import useStore from "./store";
-import { type IdeaNode } from "./types";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { Handle, NodeProps, Position } from "@xyflow/react";
+import { GripVerticalIcon, XIcon } from "lucide-react";
+import { BaseNode } from "../base-node";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { useIdeaNode } from "./hooks/use-idea-node";
+import { type TIdeaNode } from "./types";
 
 export function IdeaNode({
   id,
   data,
   dragging,
   selected,
-}: NodeProps<IdeaNode>) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const deleteBtnPressed = useKeyPress("Delete");
-  const updateNodeLabel = useStore((state) => state.updateNodeLabel);
-  const { deleteElements } = useReactFlow();
-
-  useEffect(() => {
-    if (deleteBtnPressed && inputRef.current !== document.activeElement) {
-      deleteElements({ nodes: [{ id }] });
-    }
-  }, [deleteBtnPressed, deleteElements, id]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      inputRef.current?.focus({ preventScroll: true });
-    }, 1);
-  }, []);
-
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.width = `${data.label.length * 8}px`;
-    }
-  }, [data.label.length]);
+}: NodeProps<TIdeaNode>) {
+  const { inputRef, handleLabelChange, handleDelete } = useIdeaNode(
+    id,
+    data.label,
+    dragging
+  );
 
   return (
     <BaseNode className="min-w-[256px] relative p-0 group">
@@ -59,9 +35,7 @@ export function IdeaNode({
           variant={"outline"}
           className="size-4"
           aria-label="delete node"
-          onClick={() => {
-            deleteElements({ nodes: [{ id }] });
-          }}
+          onClick={handleDelete}
         >
           <XIcon size={12} className="size-3" />
         </Button>
@@ -73,7 +47,7 @@ export function IdeaNode({
         <Input
           disabled={dragging}
           value={data.label}
-          onChange={(evt) => updateNodeLabel(id, evt.target.value)}
+          onChange={(evt) => handleLabelChange(evt.target.value)}
           className="flex-1 px-1 py-1"
           ref={inputRef}
         />

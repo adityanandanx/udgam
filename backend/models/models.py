@@ -29,20 +29,15 @@ class User(db.Model):
         }
 
 
-@dataclass
-class Idea:
-    id: UUID
-    user_id: UUID
-    title: str
-    status: str
-    description: Optional[str] = None
-    problem_statement: Optional[str] = None
-    target_market: Optional[str] = None
-    validation_score: Optional[float] = None
-    tags: Optional[List[str]] = None
-    related_ideas: Optional[List[UUID]] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+class Idea(db.Model):
+    __tablename__ = "ideas"
+    id = db.Column(db.String(36), primary_key=True)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    short_desc = db.Column(db.String(300), nullable=False)
+    nodes = db.Column(db.Text, nullable=True)
+    edges = db.Column(db.Text, nullable=True)
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 @dataclass

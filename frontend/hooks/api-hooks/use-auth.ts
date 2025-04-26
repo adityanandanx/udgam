@@ -20,6 +20,19 @@ export const useLogin = () => {
   });
 };
 
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async () => {
+      localStorage.removeItem("token");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      router.push("/login");
+    },
+  });
+};
+
 export const useRegister = () => {
   const router = useRouter();
   return useMutation({

@@ -4,4 +4,4 @@ export type NodeData = {
   label: string;
 };
 
-export type IdeaNode = Node<NodeData, "mindmap">;
+export type TIdeaNode = Node<NodeData, "mindmap">;

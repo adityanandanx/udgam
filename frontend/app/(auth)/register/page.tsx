@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/hooks/api-hooks/use-auth";
 import { RegisterPayload } from "@/lib/api/auth";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -58,8 +59,11 @@ export default function LoginPage() {
           onChange={(e) => setForm({ ...form, lastName: e.target.value })}
         />
         <Button type="submit" disabled={isPending}>
-          Login
+          Sign Up
         </Button>
+        <span>
+          Already have an account? <Link href={`/login`}>Login</Link>
+        </span>
       </form>
     </div>
   );

@@ -15,17 +15,20 @@ import { Home, StarIcon } from "lucide-react";
 import Link from "next/link";
 import AccountActions, { AccountActionsSkeleton } from "./account-actions";
 import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
+import { useParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 // Menu items.
+// Must prefix the url with "/"
 const items = [
   {
     title: "Home",
-    url: "/dashboard",
+    url: "/",
     icon: Home,
   },
   {
     title: "Idea Board",
-    url: "/dashboard/idea-board",
+    url: "/idea-board",
     icon: StarIcon,
   },
   // {
@@ -46,7 +49,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  // const side = useSidebar();
+  const { ideaId } = useParams<{ ideaId: string }>();
 
   return (
     <>
@@ -63,9 +66,14 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem
+                    className={cn("", { "opacity-50": !!!ideaId })}
+                    key={item.title}
+                  >
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>
+                      <Link
+                        href={ideaId ? `/dashboard/${ideaId}${item.url}` : ""}
+                      >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
