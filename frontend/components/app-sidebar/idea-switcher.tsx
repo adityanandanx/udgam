@@ -15,6 +15,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   useSidebar,
 } from "../ui/sidebar";
 
@@ -70,6 +71,32 @@ export const IdeaSwitcher = () => {
             )}
           >
             A smart wearable which automatimatically detects danger
+          </span>
+        </div>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+};
+
+export const IdeaSwitcherSkeleton = () => {
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem className="flex items-end">
+        <div className="flex flex-col gap-2 w-full">
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <SidebarMenuSkeleton showIcon className="w-full" />
+            <ChevronsUpDown className="ml-auto" />
+          </SidebarMenuButton>
+          <span
+            className={cn(
+              "text-xs text-muted-foreground h-8 transition-[height,opacity] line-clamp-2 space-y-2"
+            )}
+          >
+            <SidebarMenuSkeleton className="w-full" height={8} width={"100%"} />
+            <SidebarMenuSkeleton className="w-full" height={8} width={"70%"} />
           </span>
         </div>
       </SidebarMenuItem>

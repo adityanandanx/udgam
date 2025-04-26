@@ -3,6 +3,7 @@ import React, { PropsWithChildren } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "../ui/sidebar";
 
 const queryClient = new QueryClient();
 
@@ -12,7 +13,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
       <ReactQueryDevtools initialIsOpen={false} />
       <Toaster />
 
-      {children}
+      <SidebarProvider>{children}</SidebarProvider>
     </QueryClientProvider>
   );
 };

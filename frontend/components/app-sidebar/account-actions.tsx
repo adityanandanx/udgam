@@ -67,4 +67,19 @@ const AccountActions = () => {
   );
 };
 
+export const AccountActionsSkeleton = () => {
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <SidebarMenuButton size={"lg"}>
+            <SidebarMenuSkeleton className="w-[80%]" showIcon />
+            <ChevronUp className={"ml-auto"} />
+          </SidebarMenuButton>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+};
+
 export default AccountActions;
