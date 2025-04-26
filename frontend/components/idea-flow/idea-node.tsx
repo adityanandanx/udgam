@@ -5,7 +5,7 @@ import {
   useKeyPress,
   useReactFlow,
 } from "@xyflow/react";
-import { GripVerticalIcon, Trash2Icon } from "lucide-react";
+import { GripVerticalIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { BaseNode } from "../base-node";
 import { Input } from "../ui/input";
@@ -47,23 +47,23 @@ export function IdeaNode({
     <BaseNode className="min-w-[256px] relative p-0 group">
       <div
         className={cn(
-          "absolute -z-10 top-full right-0 group-hover:translate-y-1 group-hover:opacity-100 -translate-x-1 transition-transform -translate-y-full opacity-50",
+          "absolute -z-10 bottom-full right-0 group-hover:-translate-y-0 group-hover:opacity-100 -translate-x-0 transition-transform translate-y-full opacity-50",
           {
-            "-translate-y-1/2": selected,
+            "translate-y-1/2": selected,
             hidden: id === "root",
           }
         )}
       >
         <Button
           size={"icon"}
-          variant={"destructive"}
-          className="size-6"
+          variant={"outline"}
+          className="size-4"
           aria-label="delete node"
           onClick={() => {
             deleteElements({ nodes: [{ id }] });
           }}
         >
-          <Trash2Icon size={16} />
+          <XIcon size={12} className="size-3" />
         </Button>
       </div>
       <div className="flex w-full items-center justify-center">
