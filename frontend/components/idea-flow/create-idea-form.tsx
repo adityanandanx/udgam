@@ -28,7 +28,7 @@ const formSchema = z.object({
 const CreateIdeaForm = () => {
   const router = useRouter();
   const { mutate, isPending } = useCreateIdea({
-    onSuccess: (data) => router.push(`/dashboard/idea-board/${data.id}`),
+    onSuccess: (data) => router.push(`/dashboard/${data.id}/idea-board`),
   });
 
   // Initialize form

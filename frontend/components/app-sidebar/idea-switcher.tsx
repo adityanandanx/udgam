@@ -1,6 +1,13 @@
 import { useIdeas } from "@/hooks/api-hooks/use-ideas";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ChevronsUpDown, PlusIcon, WatchIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsUpDown,
+  CircleIcon,
+  PlusIcon,
+  WatchIcon,
+} from "lucide-react";
+import Link from "next/link";
 import { CreateIdeaDialogContent } from "../idea-flow/create-idea-dialog-content";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import {
@@ -16,11 +23,18 @@ import {
   SidebarMenuSkeleton,
   useSidebar,
 } from "../ui/sidebar";
-import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
 
 export const IdeaSwitcher = () => {
   const { open } = useSidebar();
   const { data, isPending, isError } = useIdeas();
+  const { ideaId } = useParams<{ ideaId: string }>();
+
+  const selectedIdea = useMemo(
+    () => (data ? data.find((idea) => idea.id === ideaId) : null),
+    [data, ideaId]
+  );
 
   if (isPending || isError) {
     return <IdeaSwitcherSkeleton />;
@@ -37,12 +51,24 @@ export const IdeaSwitcher = () => {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <WatchIcon />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Nibhay</span>
-                  </div>
+                  {selectedIdea ? (
+                    <>
+                      <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                        <CircleIcon size={16} />
+                      </div>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {selectedIdea.title}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        Select Idea
+                      </span>
+                    </div>
+                  )}
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -53,17 +79,19 @@ export const IdeaSwitcher = () => {
                 })}
               >
                 {data.map((idea) => (
-                  <Link key={idea.id} href={`/dashboard/idea-board/${idea.id}`}>
+                  <Link key={idea.id} href={`/dashboard/${idea.id}/`}>
                     <DropdownMenuItem key={idea.id}>
                       <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                        <WatchIcon size={32} />
+                        <CircleIcon />
                       </div>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
                           {idea.title}
                         </span>
                       </div>
-                      <CheckIcon className="ml-auto" />
+                      {selectedIdea?.id === idea.id && (
+                        <CheckIcon className="ml-auto" />
+                      )}
                     </DropdownMenuItem>
                   </Link>
                 ))}

@@ -5,8 +5,8 @@ import { useIdea } from "@/hooks/api-hooks/use-ideas";
 import { useParams } from "next/navigation";
 
 const IdeaBoardPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: idea, isPending, isError } = useIdea(id);
+  const { ideaId } = useParams<{ ideaId: string }>();
+  const { data: idea, isPending, isError } = useIdea(ideaId);
   if (isPending || isError) return <>Loading...</>;
 
   return (
