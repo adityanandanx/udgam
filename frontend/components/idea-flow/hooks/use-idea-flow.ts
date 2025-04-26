@@ -4,6 +4,7 @@ import { IdeaResponse } from "@/lib/api/ideas";
 import {
   InternalNode,
   OnConnectStartParams,
+  useKeyPress,
   useReactFlow,
   useStoreApi,
 } from "@xyflow/react";
@@ -39,6 +40,17 @@ export function useIdeaFlow(idea: IdeaResponse) {
   const connectingNodeId = useRef<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const ctrlS = useKeyPress(["Control+s", "Meta+s", "Strg+s"]);
+
+  // Save with hotkey
+  useEffect(() => {
+    if (ctrlS) {
+      console.log("SAVEEEE");
+
+      handleSave();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctrlS]);
 
   // Compare current state with original data to detect changes
   useEffect(() => {

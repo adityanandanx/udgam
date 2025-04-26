@@ -13,7 +13,7 @@ import {
 // we need to import the React Flow styles to make it work
 import { IdeaResponse } from "@/lib/api/ideas";
 import "@xyflow/react/dist/style.css";
-import { Loader2 } from "lucide-react";
+import { Loader2, LucideListTree, SaveIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +25,6 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
-import DebugPanel from "./debug-panel";
 import { useIdeaFlow } from "./hooks/use-idea-flow";
 import { IdeaEdge } from "./idea-edge";
 import { IdeaNode } from "./idea-node";
@@ -88,23 +87,40 @@ function Flow({ idea }: { idea: IdeaResponse }) {
       >
         <Background gap={32} variant={BackgroundVariant.Cross} />
         <Controls showInteractive={false} />
-        <Panel position="top-center" className="">
-          {idea.title}
+        <Panel position="top-center" className="flex flex-col items-center">
+          <span>
+            {idea.title}
+            {hasUnsavedChanges ? "*" : ""}
+          </span>
+          <span className="text-xs">
+            {hasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+          </span>
         </Panel>
-        <Panel position="bottom-center" className="flex gap-2">
-          <Button onClick={() => arrangeNodesHorizontally()}>Arrange</Button>
-          <Button onClick={handleSave} disabled={isSaving}>
+        <Panel position="top-right" className="flex gap-2 items-center">
+          <Button
+            variant={"secondary"}
+            onClick={() => arrangeNodesHorizontally()}
+          >
+            <LucideListTree />
+            Arrange
+          </Button>
+          <Button
+            variant={"secondary"}
+            onClick={handleSave}
+            disabled={isSaving}
+          >
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
               </>
             ) : (
-              "Save"
+              <>
+                <SaveIcon /> Save
+              </>
             )}
           </Button>
-          {hasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
         </Panel>
-        <DebugPanel />
+        {/* <DebugPanel /> */}
       </ReactFlow>
       <AlertDialog
         open={isAttemptingNavigation}
