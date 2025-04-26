@@ -21,13 +21,24 @@ import useStore, { RFState } from "./store";
 
 // we need to import the React Flow styles to make it work
 import { useUpdateIdea } from "@/hooks/api-hooks/use-ideas";
+import useBlockNavigation from "@/hooks/use-block-navigation";
 import { IdeaResponse } from "@/lib/api/ideas";
 import "@xyflow/react/dist/style.css";
 import { Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 import { Button } from "../ui/button";
+import DebugPanel from "./debug-panel";
 import { IdeaEdge } from "./idea-edge";
 import { IdeaNode } from "./idea-node";
-import DebugPanel from "./debug-panel";
 
 const selector = (state: RFState) => ({
   nodes: state.nodes,
@@ -75,10 +86,28 @@ function Flow({ idea }: { idea: IdeaResponse }) {
   const { screenToFlowPosition } = useReactFlow();
   const connectingNodeId = useRef<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Compare current state with original data to detect changes
+  useEffect(() => {
+    if (!idea || !nodes.length) return;
+
+    // Deep comparison check to determine if there are unsaved changes
+    const currentState = getCurrentState();
+    const hasChanges =
+      JSON.stringify(currentState.nodes) !== JSON.stringify(idea.nodes) ||
+      JSON.stringify(currentState.edges) !== JSON.stringify(idea.edges);
+
+    setHasUnsavedChanges(hasChanges);
+  }, [nodes, edges, idea, getCurrentState]);
+
+  const { isAttemptingNavigation, cancelNavigation, proceedNavigation } =
+    useBlockNavigation(hasUnsavedChanges);
 
   const updateIdeaMutation = useUpdateIdea({
     onSuccess: () => {
       setIsSaving(false);
+      setHasUnsavedChanges(false);
     },
     onError: () => {
       setIsSaving(false);
@@ -168,43 +197,66 @@ function Flow({ idea }: { idea: IdeaResponse }) {
   );
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      nodeOrigin={nodeOrigin}
-      defaultEdgeOptions={defaultEdgeOptions}
-      connectionLineStyle={connectionLineStyle}
-      connectionLineType={ConnectionLineType.Bezier}
-      snapToGrid
-      snapGrid={[32, 32]}
-      fitView
-      colorMode="dark"
-    >
-      <Background gap={32} variant={BackgroundVariant.Cross} />
-      <Controls showInteractive={false} />
-      <Panel position="top-center" className="">
-        {idea.title}
-      </Panel>
-      <Panel position="bottom-center" className="flex gap-2">
-        <Button onClick={() => arrangeNodesHorizontally()}>Arrange</Button>
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
-            </>
-          ) : (
-            "Save"
-          )}
-        </Button>
-      </Panel>
-      <DebugPanel />
-    </ReactFlow>
+    <>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        nodeOrigin={nodeOrigin}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionLineStyle={connectionLineStyle}
+        connectionLineType={ConnectionLineType.Bezier}
+        snapToGrid
+        snapGrid={[32, 32]}
+        fitView
+        colorMode="dark"
+      >
+        <Background gap={32} variant={BackgroundVariant.Cross} />
+        <Controls showInteractive={false} />
+        <Panel position="top-center" className="">
+          {idea.title}
+        </Panel>
+        <Panel position="bottom-center" className="flex gap-2">
+          <Button onClick={() => arrangeNodesHorizontally()}>Arrange</Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              "Save"
+            )}
+          </Button>
+          {hasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+        </Panel>
+        <DebugPanel />
+      </ReactFlow>
+      <AlertDialog
+        open={isAttemptingNavigation}
+        onOpenChange={cancelNavigation}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes that will be lost if you leave this page.
+              Do you want to save your changes before continuing?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Stay on Page</AlertDialogCancel>
+            <AlertDialogAction asChild onClick={proceedNavigation}>
+              <Button variant={"destructive"}>Leave Without Saving</Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
