@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/hooks/api-hooks/use-auth";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -40,6 +41,9 @@ export default function LoginPage() {
         <Button type="submit" disabled={isPending}>
           Login
         </Button>
+        <span>
+          Don&apos;t have an account? <Link href={`/register`}>Register</Link>
+        </span>
       </form>
     </div>
   );

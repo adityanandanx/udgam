@@ -7,18 +7,14 @@ import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
-  const { data, isLoading, error } = useUser();
+  const { data, isPending, isLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (error) router.replace("/login");
-  }, [error, router]);
-
-  useEffect(() => {
-    if (!data && !isLoading) {
+    if (!data && !isPending) {
       router.replace("/login");
     }
-  }, [data, isLoading, router]);
+  }, [data, isPending, router]);
 
   if (isLoading || !data) return <DashboardSkeleton />;
 

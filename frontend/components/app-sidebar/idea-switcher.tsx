@@ -1,13 +1,9 @@
 import { useIdeas } from "@/hooks/api-hooks/use-ideas";
 import { cn } from "@/lib/utils";
-import {
-  CheckIcon,
-  ChevronsUpDown,
-  CircleIcon,
-  PlusIcon,
-  WatchIcon,
-} from "lucide-react";
+import { CheckIcon, ChevronsUpDown, CircleIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
 import { CreateIdeaDialogContent } from "../idea-flow/create-idea-dialog-content";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import {
@@ -23,8 +19,6 @@ import {
   SidebarMenuSkeleton,
   useSidebar,
 } from "../ui/sidebar";
-import { useParams } from "next/navigation";
-import { useMemo } from "react";
 
 export const IdeaSwitcher = () => {
   const { open } = useSidebar();
