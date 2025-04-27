@@ -140,7 +140,7 @@
     @apply scroll-m-20 text-3xl font-semibold tracking-tight;
   }
   h2:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 border-b pb-2 text-2xl font-medium tracking-tight first:mt-0;
+    @apply scroll-m-20 border-b text-2xl font-medium tracking-tight;
   }
   h3:not(.not-prose, .not-prose *) {
     @apply scroll-m-20 text-xl font-medium tracking-tight;
@@ -154,9 +154,9 @@
   h6:not(.not-prose, .not-prose *) {
     @apply scroll-m-20 text-sm font-medium tracking-tight;
   }
-  p:not(.not-prose, .not-prose *) {
-    @apply leading-6 [&:not(:first-child)]:mt-4;
-  }
+  /* p:not(.not-prose, .not-prose *) { */
+    /* @apply; */
+  /* } */
   blockquote:not(.not-prose, .not-prose *) {
     @apply mt-6 border-l-2 pl-6 italic;
   }

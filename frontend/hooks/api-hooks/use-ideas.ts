@@ -4,6 +4,7 @@ import {
   deleteIdea,
   getIdea,
   getIdeas,
+  getIdeaValidation,
   IdeaResponse,
   updateIdea,
   UpdateIdeaPayload,
@@ -85,5 +86,16 @@ export const useDeleteIdea = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ideas"] });
     },
+  });
+};
+
+export const useValidationOfIdea = (ideaId: string) => {
+  return useQuery({
+    queryKey: ["ideas", ideaId, "validation"],
+    queryFn: async () => {
+      const validation = await getIdeaValidation(ideaId);
+      return validation;
+    },
+    enabled: !!localStorage.getItem("token"),
   });
 };

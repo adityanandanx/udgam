@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
-import { Globe, Home, StarIcon } from "lucide-react";
+import { CheckCircle2Icon, Globe, Home, StarIcon } from "lucide-react";
 import Link from "next/link";
 import AccountActions, { AccountActionsSkeleton } from "./account-actions";
 import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
@@ -36,11 +36,11 @@ const items = [
     url: "/geo-map",
     icon: Globe,
   },
-  // {
-  //   title: "Search",
-  //   url: "#",
-  //   icon: Search,
-  // },
+  {
+    title: "Validation",
+    url: "/validation",
+    icon: CheckCircle2Icon,
+  },
   // {
   //   title: "Settings",
   //   url: "#",

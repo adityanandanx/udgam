@@ -31,6 +31,15 @@ export type UpdateIdeaPayload = Partial<CreateIdeaPayload>;
 export type UpdateIdeaPayloadStringified =
   Partial<CreateIdeaPayloadStringified>;
 
+export type IdeaValidationResponse = {
+  id: string;
+  score: number;
+  marketFitScore: number;
+  feasibilityScore: number;
+  innovationScore: number;
+  insights: { aspect: string; description: string }[];
+};
+
 const stringifyPayload = (
   data: CreateIdeaPayload | UpdateIdeaPayload
 ): CreateIdeaPayloadStringified | UpdateIdeaPayloadStringified => {
@@ -84,4 +93,12 @@ export const updateIdea = async (
 
 export const deleteIdea = async (id: string): Promise<void> => {
   await axios.delete(`/ideas/${id}`);
+};
+
+export const getIdeaValidation = async (
+  ideaId: string
+): Promise<IdeaValidationResponse> => {
+  const res = await axios.post(`/ideas/${ideaId}/validate`);
+  console.log(res.data);
+  return res.data;
 };
