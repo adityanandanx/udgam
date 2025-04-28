@@ -1,4 +1,4 @@
-from client import watsonx_llm
+from ..client import watsonx_llm
 
 # List of valid factors from our factor_weights.csv
 VALID_FACTORS = [

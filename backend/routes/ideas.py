@@ -2,6 +2,9 @@ from flask import Blueprint, request, jsonify
 from models.models import Idea, db
 from uuid import uuid4
 from routes.auth import token_required
+from utils.idea_to_markdown import idea_to_markdown
+from heatmap_agent.heatmap_agent import agent
+
 
 ideas_bp = Blueprint("ideas", __name__)
 
@@ -194,6 +197,31 @@ def validate_idea(current_user, idea_id):
 
     return (
         jsonify(validation_result),
+        200,
+    )
+
+
+@ideas_bp.route("/<idea_id>/generate-heatmap", methods=["GET"])
+@token_required
+def generate_heatmap(current_user, idea_id):
+    """Generate heatmap of an idea"""
+    idea = Idea.query.get(idea_id)
+
+    if not idea:
+        return jsonify({"error": "Idea not found"}), 404
+
+    # Check if idea belongs to the authenticated user
+    if idea.user_id != current_user.id:
+        return jsonify({"error": "Unauthorized access"}), 403
+
+    md = idea_to_markdown(idea)
+
+    print(md)
+
+    result = agent.invoke({"idea": md})
+
+    return (
+        jsonify(result["heatmap"]),
         200,
     )
 

@@ -2,6 +2,7 @@ import {
   createIdea,
   CreateIdeaPayload,
   deleteIdea,
+  generateIdeaHeatmap,
   getIdea,
   getIdeas,
   IdeaResponse,
@@ -85,5 +86,16 @@ export const useDeleteIdea = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ideas"] });
     },
+  });
+};
+
+export const useGenerateIdeaHeatmap = (id: string) => {
+  return useQuery({
+    queryKey: ["ideas", id, "heatmap"],
+    queryFn: async () => {
+      return await generateIdeaHeatmap(id);
+    },
+    enabled: false,
+    retry: false,
   });
 };

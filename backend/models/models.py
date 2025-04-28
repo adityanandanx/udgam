@@ -39,6 +39,9 @@ class Idea(db.Model):
     edges = db.Column(db.Text, nullable=True)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    def to_markdown():
+        pass
+
 
 @dataclass
 class ValidationResult:

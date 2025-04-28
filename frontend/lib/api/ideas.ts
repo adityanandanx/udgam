@@ -1,6 +1,7 @@
 import { TIdeaNode } from "@/components/idea-flow/types";
 import { Edge } from "@xyflow/react";
 import axios from "../axios";
+import { IdeaHeatmap } from "@/components/geo-map/heatmap";
 
 export type IdeaResponse = {
   id: string;
@@ -84,4 +85,13 @@ export const updateIdea = async (
 
 export const deleteIdea = async (id: string): Promise<void> => {
   await axios.delete(`/ideas/${id}`);
+};
+
+export const generateIdeaHeatmap = async (
+  idea_id: string
+): Promise<IdeaHeatmap> => {
+  const res = await axios.get<IdeaHeatmap>(
+    `/ideas/${idea_id}/generate-heatmap`
+  );
+  return res.data;
 };

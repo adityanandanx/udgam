@@ -18,6 +18,7 @@ parameters = {
     "top_p": 1,
 }
 
+print("creating watson")
 watsonx_llm = WatsonxLLM(
     apikey=apikey,
     url=url,
@@ -25,3 +26,4 @@ watsonx_llm = WatsonxLLM(
     params=parameters,
     model_id="ibm/granite-3-8b-instruct",
 )
+print("created watson")

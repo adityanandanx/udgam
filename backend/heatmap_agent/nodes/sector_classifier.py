@@ -1,4 +1,4 @@
-from client import watsonx_llm
+from ..client import watsonx_llm
 
 sector_prompt = """You are an expert startup sector classifier.
 Given a startup idea, return the most likely sectors it belongs to from the following list:

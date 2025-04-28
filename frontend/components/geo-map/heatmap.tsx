@@ -2,7 +2,9 @@ import { useEffect, useMemo } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { FeatureCollection, Point, GeoJsonProperties } from "geojson";
 
-export type IdeaHeatmap = FeatureCollection<Point, GeoJsonProperties>
+export type IdeaHeatmap = FeatureCollection<Point, GeoJsonProperties> & {
+  factors: string[];
+};
 
 type HeatmapProps = {
   geojson: FeatureCollection<Point, GeoJsonProperties>;
@@ -20,6 +22,7 @@ const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
     return new google.maps.visualization.HeatmapLayer({
       radius: radius,
       opacity: opacity,
+      maxIntensity: 2,
     });
   }, [visualization, radius, opacity]);
 
@@ -32,7 +35,7 @@ const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
 
         return {
           location: new google.maps.LatLng(lat, lng),
-          weight: point.properties?.mag,
+          weight: point.properties?.weight,
         };
       })
     );

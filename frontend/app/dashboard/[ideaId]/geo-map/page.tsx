@@ -1,19 +1,23 @@
 "use client";
 
+import Heatmap from "@/components/geo-map/heatmap";
 import { useGeoStore } from "@/components/geo-map/store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGenerateIdeaHeatmap } from "@/hooks/api-hooks/use-ideas";
 import {
   AdvancedMarker,
   APIProvider,
   ControlPosition,
   Map,
+  MapControl,
   MapMouseEvent,
   Pin,
 } from "@vis.gl/react-google-maps";
+import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import { Circle } from "../../../../components/geo-map/circle";
-import Heatmap, { IdeaHeatmap } from "@/components/geo-map/heatmap";
+import { HeaterIcon } from "lucide-react";
 
 const getMockIdeas = (lat: number, lng: number) => {
   return [
@@ -30,248 +34,7 @@ const getMockIdeas = (lat: number, lng: number) => {
   ];
 };
 
-const mockHeatmap: IdeaHeatmap = {
-  type: "FeatureCollection",
-  factors: [
-    "Talent Pool",
-    "Tech Adoption",
-    "Healthcare Facilities",
-    "Talent Pool",
-    "Competition",
-    "Tech Adoption",
-    "Digital Infrastructure",
-    "Green Initiatives",
-    "Digital Infrastructure",
-    "Talent Pool",
-    "Urbanization",
-    "Disposable Income",
-    "Government Support",
-  ],
-  features: [
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.93,
-        district: "Mumbai",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [72.8777, 19.076],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.89,
-        district: "Delhi",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [77.1025, 28.7041],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.9,
-        district: "Bangalore",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [77.5946, 12.9716],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.77,
-        district: "Chennai",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [80.2707, 13.0827],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.8,
-        district: "Hyderabad",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [78.4867, 17.385],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.71,
-        district: "Kolkata",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [88.3639, 22.5726],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.77,
-        district: "Pune",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [73.8567, 18.5204],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.74,
-        district: "Ahmedabad",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [72.5714, 23.0225],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.65,
-        district: "Jaipur",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [75.7873, 26.9124],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.63,
-        district: "Lucknow",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [80.9462, 26.8467],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.67,
-        district: "Chandigarh",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [76.7794, 30.7333],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.64,
-        district: "Indore",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [75.8577, 22.7196],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.63,
-        district: "Nagpur",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [79.0882, 21.1458],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.6,
-        district: "Bhopal",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [77.4126, 23.2599],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.61,
-        district: "Visakhapatnam",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [83.2185, 17.6868],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.69,
-        district: "Kochi",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [76.2673, 9.9312],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.65,
-        district: "Coimbatore",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [76.9558, 11.0168],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.56,
-        district: "Guwahati",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [91.7362, 26.1445],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.57,
-        district: "Bhubaneswar",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [85.8245, 20.2961],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        weight: 0.55,
-        district: "Dehradun",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [78.0322, 30.3165],
-      },
-    },
-  ],
-};
-
-export default function FeatureTwo() {
+export default function GeoMapPage() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || "";
   const mapId = process.env.NEXT_PUBLIC_MAP_ID || "";
 
@@ -284,6 +47,10 @@ export default function FeatureTwo() {
 
   const [circleCenter, setCircleCenter] =
     useState<google.maps.LatLngLiteral | null>(null);
+
+  const { ideaId } = useParams<{ ideaId: string }>();
+
+  const heatmapQuery = useGenerateIdeaHeatmap(ideaId);
 
   const handleMapClick = useCallback(
     (e: MapMouseEvent) => {
@@ -341,7 +108,27 @@ export default function FeatureTwo() {
             </>
           )}
 
-          <Heatmap geojson={mockHeatmap} opacity={0.8} radius={50} />
+          {/* <div className="bg-background fixed top-0 w-sm">
+            <pre>{JSON.stringify(heatmapQuery, null, 2)}</pre>
+          </div> */}
+
+          {heatmapQuery.isPending || heatmapQuery.isError ? null : (
+            <>
+              <Heatmap geojson={heatmapQuery.data} opacity={0.8} radius={50} />
+            </>
+          )}
+
+          <MapControl position={ControlPosition.RIGHT}>
+            <div className="px-2">
+              <Button
+                onClick={() => heatmapQuery.refetch()}
+                disabled={heatmapQuery.isLoading}
+                variant={"secondary"}
+              >
+                <HeaterIcon /> Generate Heatmap
+              </Button>
+            </div>
+          </MapControl>
         </Map>
       </APIProvider>
 

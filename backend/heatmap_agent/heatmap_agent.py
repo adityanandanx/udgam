@@ -1,9 +1,9 @@
 from langgraph.graph import StateGraph
-from nodes.md_parser import parse_markdown
-from nodes.sector_classifier import classify_sector
-from nodes.factor_identifier import identify_factors
-from nodes.location_scorer import score_locations
-from nodes.heatmap_generator import generate_heatmap
+from .nodes.md_parser import parse_markdown
+from .nodes.sector_classifier import classify_sector
+from .nodes.factor_identifier import identify_factors
+from .nodes.location_scorer import score_locations
+from .nodes.heatmap_generator import generate_heatmap
 from typing import TypedDict, List
 
 
