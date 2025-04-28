@@ -4,6 +4,7 @@ from uuid import uuid4
 from routes.auth import token_required
 from utils.idea_to_markdown import idea_to_markdown
 from heatmap_agent.heatmap_agent import agent
+from extensions import cache
 
 
 ideas_bp = Blueprint("ideas", __name__)
@@ -127,6 +128,7 @@ def update_idea(current_user, idea_id):
     if "edges" in data:
         idea.edges = data["edges"]
 
+    # Any change to the idea will update the timestamp, which will invalidate the cache
     db.session.commit()
 
     return (
@@ -214,16 +216,22 @@ def generate_heatmap(current_user, idea_id):
     if idea.user_id != current_user.id:
         return jsonify({"error": "Unauthorized access"}), 403
 
+    # Try to get cached result - using idea_id and a timestamp of last modification
+    # This ensures cache is invalidated when idea is updated
+    cache_key = f"heatmap_{idea_id}_{idea.updatedAt.timestamp()}"
+    cached_result = cache.get(cache_key)
+
+    if cached_result:
+        return jsonify(cached_result), 200
+
+    # If no cache hit, generate the heatmap
     md = idea_to_markdown(idea)
-
-    print(md)
-
     result = agent.invoke({"idea": md})
 
-    return (
-        jsonify(result["heatmap"]),
-        200,
-    )
+    # Cache the result
+    cache.set(cache_key, result["heatmap"])
+
+    return jsonify(result["heatmap"]), 200
 
 
 # @ideas_bp.route("/generate", methods=["POST"])

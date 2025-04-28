@@ -2,9 +2,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from uuid import UUID
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from extensions import db
+from sqlalchemy.sql import func
 
 
 class User(db.Model):
@@ -37,10 +36,9 @@ class Idea(db.Model):
     short_desc = db.Column(db.String(300), nullable=False)
     nodes = db.Column(db.Text, nullable=True)
     edges = db.Column(db.Text, nullable=True)
-    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    def to_markdown():
-        pass
+    createdAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    updatedAt = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
 
 @dataclass

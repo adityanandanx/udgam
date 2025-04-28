@@ -125,7 +125,7 @@ export default function GeoMapPage() {
                 disabled={heatmapQuery.isLoading}
                 variant={"secondary"}
               >
-                <HeaterIcon /> Generate Heatmap
+                <HeaterIcon /> Refresh Heatmap
               </Button>
             </div>
           </MapControl>

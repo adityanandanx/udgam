@@ -4,7 +4,7 @@ from .nodes.sector_classifier import classify_sector
 from .nodes.factor_identifier import identify_factors
 from .nodes.location_scorer import score_locations
 from .nodes.heatmap_generator import generate_heatmap
-from typing import TypedDict, List
+from typing import TypedDict, List, Dict, Any, Callable
 
 
 class HeatmapAgentState(TypedDict):
@@ -33,3 +33,29 @@ graph.set_entry_point("parse_markdown")
 graph.set_finish_point("generate_heatmap")
 
 agent = graph.compile()
+
+
+# Wrapper function for consistent caching
+def generate_idea_heatmap(idea_markdown: str) -> Dict[str, Any]:
+    """
+    Generates a heatmap for an idea using the agent pipeline.
+
+    Args:
+        idea_markdown: The markdown representation of the idea
+
+    Returns:
+        Dict containing the heatmap data and other relevant information
+    """
+    result = agent.invoke({"idea": idea_markdown})
+
+    # Ensure the heatmap is in a consistent format for caching
+    if "heatmap" not in result or not result["heatmap"]:
+        # Return a default structure if heatmap generation failed
+        return {"heatmap": [], "error": "Failed to generate heatmap", "success": False}
+
+    return {
+        "heatmap": result["heatmap"],
+        "sectors": result.get("sectors", []),
+        "factors": result.get("factors", []),
+        "success": True,
+    }

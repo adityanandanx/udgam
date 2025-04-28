@@ -7,7 +7,7 @@ from routes.users import users_bp
 from routes.ideas import ideas_bp
 from routes.market import market_bp
 from routes.documents import documents_bp
-from flask_migrate import Migrate
+from extensions import init_extensions
 
 
 def create_app(test_config=None):
@@ -23,6 +23,8 @@ def create_app(test_config=None):
                 "DATABASE_URL", "sqlite:///udgam.db"
             ),
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
+            CACHE_TYPE=os.environ.get("CACHE_TYPE", "SimpleCache"),
+            CACHE_DEFAULT_TIMEOUT=300,  # 5 minutes default cache timeout
         )
     else:
         # Test configuration
@@ -30,12 +32,7 @@ def create_app(test_config=None):
 
     # Initialize extensions
     CORS(app, origins=["*"], supports_credentials=True)
-    db.init_app(app)
-    migrate = Migrate(app, db)
-
-    # Create tables if they don't exist
-    # with app.app_context():
-    #     db.create_all()
+    init_extensions(app)
 
     # Register API prefix
     api_prefix = "/v1"
