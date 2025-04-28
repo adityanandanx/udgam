@@ -1,0 +1,21 @@
+factor,population,internet,startup_ecosystem,infrastructure,transportation,power_supply,water_supply,commercial_space,education,healthcare
+Market Size,0.8,0.5,0.3,0.2,0.3,0.0,0.0,0.2,0.1,0.2
+Internet Penetration,0.3,0.9,0.4,0.1,0.0,0.0,0.0,0.0,0.3,0.0
+Digital Infrastructure,0.2,0.8,0.5,0.4,0.1,0.6,0.0,0.1,0.2,0.0
+Logistics Network,0.5,0.3,0.2,0.7,0.9,0.0,0.0,0.3,0.0,0.0
+Talent Pool,0.7,0.5,0.7,0.3,0.2,0.0,0.0,0.1,0.8,0.3
+Investor Ecosystem,0.3,0.4,0.9,0.2,0.1,0.0,0.0,0.4,0.3,0.0
+Competition,0.6,0.5,0.7,0.1,0.0,0.0,0.0,0.3,0.0,0.0
+Infrastructure,0.3,0.2,0.3,0.9,0.7,0.8,0.8,0.7,0.0,0.0
+Power Supply,0.2,0.3,0.4,0.8,0.0,1.0,0.0,0.4,0.0,0.0
+Water Resources,0.3,0.0,0.1,0.7,0.0,0.0,1.0,0.1,0.0,0.0
+Commercial Space,0.4,0.2,0.5,0.7,0.3,0.0,0.0,1.0,0.0,0.0
+Education Access,0.6,0.5,0.4,0.3,0.2,0.0,0.0,0.0,1.0,0.0
+Healthcare Facilities,0.5,0.3,0.2,0.5,0.4,0.0,0.0,0.0,0.0,1.0
+Green Initiatives,0.3,0.2,0.4,0.6,0.5,0.5,0.6,0.0,0.0,0.0
+Tech Adoption,0.4,0.9,0.7,0.3,0.0,0.0,0.0,0.0,0.4,0.3
+Public Transportation,0.7,0.3,0.2,0.6,1.0,0.0,0.0,0.0,0.0,0.0
+Government Support,0.3,0.4,0.8,0.5,0.4,0.4,0.4,0.5,0.5,0.5
+Disposable Income,0.8,0.6,0.5,0.4,0.3,0.0,0.0,0.5,0.4,0.0
+Youth Population,0.9,0.7,0.5,0.2,0.2,0.0,0.0,0.0,0.5,0.2
+Urbanization,0.8,0.7,0.6,0.7,0.6,0.5,0.4,0.7,0.6,0.5

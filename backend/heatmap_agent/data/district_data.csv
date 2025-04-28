@@ -1,0 +1,21 @@
+district,state,region,tier
+Mumbai,Maharashtra,West,Tier-1
+Delhi,Delhi,North,Tier-1
+Bangalore,Karnataka,South,Tier-1
+Chennai,Tamil Nadu,South,Tier-1
+Hyderabad,Telangana,South,Tier-1
+Kolkata,West Bengal,East,Tier-1
+Pune,Maharashtra,West,Tier-1
+Ahmedabad,Gujarat,West,Tier-1
+Jaipur,Rajasthan,North,Tier-2
+Lucknow,Uttar Pradesh,North,Tier-2
+Chandigarh,Punjab,North,Tier-2
+Indore,Madhya Pradesh,Central,Tier-2
+Nagpur,Maharashtra,West,Tier-2
+Bhopal,Madhya Pradesh,Central,Tier-2
+Visakhapatnam,Andhra Pradesh,South,Tier-2
+Kochi,Kerala,South,Tier-2
+Coimbatore,Tamil Nadu,South,Tier-2
+Guwahati,Assam,Northeast,Tier-2
+Bhubaneswar,Odisha,East,Tier-2
+Dehradun,Uttarakhand,North,Tier-2
