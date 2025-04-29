@@ -12,6 +12,7 @@ import {
   ListOrdered,
   Quote,
   Redo,
+  Save,
   Strikethrough,
   UnderlineIcon,
   Undo,
@@ -25,7 +26,7 @@ export interface TopMenuItem {
   command: () => void;
   icon?: typeof BoldIcon;
 }
-export default function TipTapMenuBar() {
+export default function TipTapMenuBar({ onSave }: { onSave?: () => void }) {
   const { editor } = useCurrentEditor();
 
   if (!editor) return null;
@@ -137,6 +138,19 @@ export default function TipTapMenuBar() {
           size={"icon"}
         >
           <Redo className="w-6 h-6" />
+        </Button>
+
+        <div className="w-9">
+          <Separator decorative orientation="horizontal" />
+        </div>
+
+        <Button
+          onClick={onSave}
+          variant={"outline"}
+          size={"icon"}
+          title="Save content"
+        >
+          <Save className="w-6 h-6" />
         </Button>
       </div>
     </div>

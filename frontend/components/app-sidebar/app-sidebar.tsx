@@ -10,25 +10,36 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useNotepads } from "@/hooks/api-hooks/use-notepads";
 import { cn } from "@/lib/utils";
 import { Globe, Home, NotebookTextIcon, StarIcon } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import { FC } from "react";
 import AccountActions, { AccountActionsSkeleton } from "./account-actions";
 import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
 
+type MenuItem = {
+  title: string;
+  url: string;
+  icon: FC;
+};
+
 // Menu items.
 // Must prefix the url with "/"
-const items = [
+const items: MenuItem[] = [
   {
     title: "Home",
-    url: "/",
+    url: "",
     icon: Home,
   },
   {
-    title: "Lean Canvas",
-    url: "/lean-canvas",
+    title: "Notebook",
+    url: "/notebook",
     icon: NotebookTextIcon,
   },
   {
@@ -41,20 +52,12 @@ const items = [
     url: "/geo-map",
     icon: Globe,
   },
-  // {
-  //   title: "Search",
-  //   url: "#",
-  //   icon: Search,
-  // },
-  // {
-  //   title: "Settings",
-  //   url: "#",
-  //   icon: Settings,
-  // },
 ];
 
 export function AppSidebar() {
+  const path = usePathname();
   const { ideaId } = useParams<{ ideaId: string }>();
+  const { data: notepads } = useNotepads(ideaId);
 
   return (
     <>
@@ -70,21 +73,42 @@ export function AppSidebar() {
             <SidebarGroupLabel>Application</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {items.map((item) => (
-                  <SidebarMenuItem
-                    className={cn("", { "opacity-50": !!!ideaId })}
-                    key={item.title}
-                  >
-                    <SidebarMenuButton asChild>
-                      <Link
-                        href={ideaId ? `/dashboard/${ideaId}${item.url}` : ""}
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {items.map((item) => {
+                  const isNotebook = item.url === "/notebook";
+                  const href = `/dashboard/${ideaId}${item.url}`;
+                  const isActive = path === href;
+
+                  return (
+                    <SidebarMenuItem
+                      className={cn("", { "opacity-50": !!!ideaId })}
+                      key={item.title}
+                    >
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link href={href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                      {isNotebook ? (
+                        <SidebarMenuSub>
+                          {notepads?.map((item, i) => (
+                            <SidebarMenuSubItem key={i}>
+                              <SidebarMenuSubButton
+                                href={`/dashboard/${ideaId}/notebook/${item.id}`}
+                                isActive={
+                                  path ===
+                                  `/dashboard/${ideaId}/notebook/${item.id}`
+                                }
+                              >
+                                {item.content.slice(0, 20)}
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      ) : null}
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

@@ -7,6 +7,7 @@ from routes.users import users_bp
 from routes.ideas import ideas_bp
 from routes.market import market_bp
 from routes.documents import documents_bp
+from routes.notepads import notepads_bp
 from flask_migrate import Migrate
 
 
@@ -46,6 +47,7 @@ def create_app(test_config=None):
     app.register_blueprint(ideas_bp, url_prefix=f"{api_prefix}/ideas")
     app.register_blueprint(market_bp, url_prefix=f"{api_prefix}/market")
     app.register_blueprint(documents_bp, url_prefix=f"{api_prefix}/documents")
+    app.register_blueprint(notepads_bp, url_prefix=f"{api_prefix}")
 
     @app.route("/")
     def health_check():

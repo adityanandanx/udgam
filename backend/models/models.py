@@ -40,6 +40,18 @@ class Idea(db.Model):
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
+class IdeaNotePad(db.Model):
+    __tablename__ = "idea_notepads"
+    id = db.Column(db.String(36), primary_key=True)
+    idea_id = db.Column(db.String(36), db.ForeignKey("ideas.id"), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updatedAt = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+
 @dataclass
 class ValidationResult:
     score: float
