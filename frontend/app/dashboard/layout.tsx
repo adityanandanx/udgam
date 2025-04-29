@@ -7,7 +7,7 @@ import { redirect, useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
-  const { data, isPending, isLoading } = useUser();
+  const { data, isPending } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -16,8 +16,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
     }
   }, [data, isPending, router]);
 
-  if (isLoading) return <DashboardSkeleton />;
-  if (!data) redirect("/login");
+  if (isPending) return <DashboardSkeleton />;
 
   return (
     <>

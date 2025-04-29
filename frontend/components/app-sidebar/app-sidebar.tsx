@@ -11,12 +11,12 @@ import {
   SidebarMenuItem,
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
-import { Globe, Home, StarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Globe, Home, NotebookTextIcon, StarIcon } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import AccountActions, { AccountActionsSkeleton } from "./account-actions";
 import { IdeaSwitcher, IdeaSwitcherSkeleton } from "./idea-switcher";
-import { useParams } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 // Menu items.
 // Must prefix the url with "/"
@@ -25,6 +25,11 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "Lean Canvas",
+    url: "/lean-canvas",
+    icon: NotebookTextIcon,
   },
   {
     title: "Idea Board",

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -99,7 +100,7 @@
   --secondary-foreground: #f4f4f4;
   --muted: #393939;
   --muted-foreground: #c6c6c6;
-  --accent: #4589ff;
+  --accent: hsl(218, 10%, 27%);
   --accent-foreground: #ffffff;
   --destructive: #fa4d56;
   --border: #6f6f6f;
@@ -134,54 +135,15 @@
   }
 }
 
-@layer base {
-  /* Carbon Design System typography */
-  h1:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 text-3xl font-semibold tracking-tight;
-  }
-  h2:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 border-b pb-2 text-2xl font-medium tracking-tight first:mt-0;
-  }
-  h3:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 text-xl font-medium tracking-tight;
-  }
-  h4:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 text-lg font-medium tracking-tight;
-  }
-  h5:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 text-base font-medium tracking-tight;
-  }
-  h6:not(.not-prose, .not-prose *) {
-    @apply scroll-m-20 text-sm font-medium tracking-tight;
-  }
-  p:not(.not-prose, .not-prose *) {
-    @apply leading-6 [&:not(:first-child)]:mt-4;
-  }
-  blockquote:not(.not-prose, .not-prose *) {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-  
-  /* Carbon tables */
-  table:not(.not-prose, .not-prose *) {
-    @apply my-6;
-    tr {
-      @apply m-0 border-t p-0 even:bg-muted;
-    }
-    th {
-      @apply border px-4 py-2 text-left font-medium [&[align=center]]:text-center [&[align=right]]:text-right;
-    }
-    td {
-      @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
-    }
-  }
-  
-  /* Code blocks with IBM Plex Mono */
-  code:not(.not-prose, .not-prose *) {
-    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  
-  small:not(.not-prose, .not-prose *) {
-    @apply text-sm font-normal leading-none;
-  }
+::-webkit-scrollbar {
+    @apply w-2.5 h-2.5;
+   
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent
+}
+ 
+::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border border-[1px] border-transparent border-solid bg-clip-padding;
 }

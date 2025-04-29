@@ -101,7 +101,8 @@ function SidebarProvider({
         (event.metaKey || event.ctrlKey)
       ) {
         event.preventDefault();
-        toggleSidebar();
+        if (!document.activeElement?.classList.contains("tiptap"))
+          toggleSidebar();
       }
     };
 
