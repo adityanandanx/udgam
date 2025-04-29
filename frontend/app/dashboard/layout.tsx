@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import DashboardSkeleton from "@/components/skeletons/dashboard-skeleton";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/api-hooks/use-auth";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {

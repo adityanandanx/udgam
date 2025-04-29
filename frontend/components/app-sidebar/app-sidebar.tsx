@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/sidebar";
 import { useNotepads } from "@/hooks/api-hooks/use-notepads";
 import { cn } from "@/lib/utils";
-import { Globe, Home, NotebookTextIcon, StarIcon } from "lucide-react";
+import {
+  EditIcon,
+  Globe,
+  Home,
+  NotebookTextIcon,
+  StarIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { FC } from "react";
@@ -83,7 +89,10 @@ export function AppSidebar() {
                       className={cn("", { "opacity-50": !!!ideaId })}
                       key={item.title}
                     >
-                      <SidebarMenuButton asChild isActive={isActive}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive && !isNotebook}
+                      >
                         <Link href={href}>
                           <item.icon />
                           <span>{item.title}</span>
@@ -91,16 +100,34 @@ export function AppSidebar() {
                       </SidebarMenuButton>
                       {isNotebook ? (
                         <SidebarMenuSub>
-                          {notepads?.map((item, i) => (
-                            <SidebarMenuSubItem key={i}>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton
+                              isActive={
+                                path === `/dashboard/${ideaId}/notebook`
+                              }
+                              asChild
+                            >
+                              <Link href={`/dashboard/${ideaId}/notebook`}>
+                                <span className="flex-1">Create new</span>
+
+                                <EditIcon />
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {notepads?.map((item) => (
+                            <SidebarMenuSubItem key={item.id}>
                               <SidebarMenuSubButton
-                                href={`/dashboard/${ideaId}/notebook/${item.id}`}
                                 isActive={
                                   path ===
                                   `/dashboard/${ideaId}/notebook/${item.id}`
                                 }
+                                asChild
                               >
-                                {item.content.slice(0, 20)}
+                                <Link
+                                  href={`/dashboard/${ideaId}/notebook/${item.id}`}
+                                >
+                                  {item.title}
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           ))}

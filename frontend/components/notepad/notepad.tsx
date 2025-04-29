@@ -9,10 +9,11 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { Editor, EditorProvider } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 import { EditorMenus } from "./editor-menus";
 import SlashCommand from "./extensions/slash-command";
 import TipTapMenuBar from "./top-menu/top-menu-item";
@@ -40,6 +41,9 @@ export const Notepad = ({
   const [editorContent, setEditorContent] = useState<string>(
     notepad?.content || "default content"
   );
+  const [notepadTitle, setNotepadTitle] = useState<string>(
+    notepad?.title || `${idea.title} Notes`
+  );
   const router = useRouter();
 
   const handleSave = useCallback(() => {
@@ -53,7 +57,10 @@ export const Notepad = ({
         {
           notepadId: notepad.id,
           ideaId: idea.id,
-          data: { content: editorContent },
+          data: {
+            title: notepadTitle,
+            content: editorContent,
+          },
         },
         {
           onSuccess: () => {
@@ -70,7 +77,10 @@ export const Notepad = ({
       createNotepadMutation.mutate(
         {
           ideaId: idea.id,
-          data: { content: editorContent },
+          data: {
+            title: notepadTitle,
+            content: editorContent,
+          },
         },
         {
           onSuccess: (data) => {
@@ -90,9 +100,14 @@ export const Notepad = ({
     notepad,
     updateNotepadMutation,
     editorContent,
+    notepadTitle,
     createNotepadMutation,
     router,
   ]);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNotepadTitle(e.target.value);
+  };
 
   // Function to handle content updates from the editor
   const handleUpdate = useCallback(({ editor }: { editor: Editor }) => {
@@ -101,6 +116,35 @@ export const Notepad = ({
 
   return (
     <div className="flex flex-col mt-5">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex-1 mr-4">
+          <input
+            value={notepadTitle}
+            onChange={handleTitleChange}
+            placeholder="Notepad Title"
+            className="text-lg h-9 border-none outline-none w-full"
+          />
+        </div>
+        <Button
+          variant={"outline"}
+          onClick={handleSave}
+          disabled={isSaving}
+          className="flex items-center gap-2"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Saving...</span>
+            </>
+          ) : (
+            <>
+              <Save className="h-4 w-4" />
+              <span>Save</span>
+            </>
+          )}
+        </Button>
+      </div>
+
       <div className="grid grid-cols-[1fr_auto] gap-x-2">
         {editorContent && (
           <EditorProvider
@@ -111,7 +155,7 @@ export const Notepad = ({
             immediatelyRender={false}
             slotAfter={
               <div className="w-fit">
-                <TipTapMenuBar onSave={handleSave} />
+                <TipTapMenuBar />
                 {isSaving && (
                   <div className="flex items-center justify-center mt-4">
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />

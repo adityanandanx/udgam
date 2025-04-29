@@ -45,6 +45,7 @@ class IdeaNotePad(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     idea_id = db.Column(db.String(36), db.ForeignKey("ideas.id"), nullable=False)
     user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(100), nullable=False, default="Untitled Notepad")
     content = db.Column(db.Text, nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updatedAt = db.Column(

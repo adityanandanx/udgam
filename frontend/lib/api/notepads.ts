@@ -4,16 +4,19 @@ export type NotepadResponse = {
   id: string;
   idea_id: string;
   user_id: string;
+  title: string;
   content: string;
   createdAt: string;
   updatedAt: string;
 };
 
 export type CreateNotepadPayload = {
+  title?: string;
   content: string;
 };
 
 export type UpdateNotepadPayload = {
+  title?: string;
   content: string;
 };
 

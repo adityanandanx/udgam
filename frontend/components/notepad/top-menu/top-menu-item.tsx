@@ -12,7 +12,6 @@ import {
   ListOrdered,
   Quote,
   Redo,
-  Save,
   Strikethrough,
   UnderlineIcon,
   Undo,
@@ -26,7 +25,7 @@ export interface TopMenuItem {
   command: () => void;
   icon?: typeof BoldIcon;
 }
-export default function TipTapMenuBar({ onSave }: { onSave?: () => void }) {
+export default function TipTapMenuBar() {
   const { editor } = useCurrentEditor();
 
   if (!editor) return null;
@@ -34,7 +33,7 @@ export default function TipTapMenuBar({ onSave }: { onSave?: () => void }) {
   return (
     // <div className="flex flex-wrap gap-2 items-center">
     <div className="">
-      <div className="flex flex-col z-20 items-start gap-2 bg-background">
+      <div className="flex flex-col z-20 items-end gap-2 bg-background">
         <NodeSelector />
 
         <Toggle
@@ -138,19 +137,6 @@ export default function TipTapMenuBar({ onSave }: { onSave?: () => void }) {
           size={"icon"}
         >
           <Redo className="w-6 h-6" />
-        </Button>
-
-        <div className="w-9">
-          <Separator decorative orientation="horizontal" />
-        </div>
-
-        <Button
-          onClick={onSave}
-          variant={"outline"}
-          size={"icon"}
-          title="Save content"
-        >
-          <Save className="w-6 h-6" />
         </Button>
       </div>
     </div>

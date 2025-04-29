@@ -36,6 +36,7 @@ def list_notepads(current_user, idea_id):
                     "id": notepad.id,
                     "idea_id": notepad.idea_id,
                     "user_id": notepad.user_id,
+                    "title": notepad.title,
                     "content": notepad.content,
                     "createdAt": notepad.createdAt.isoformat() + "Z",
                     "updatedAt": notepad.updatedAt.isoformat() + "Z",
@@ -70,6 +71,7 @@ def create_notepad(current_user, idea_id):
         id=str(uuid4()),
         idea_id=idea_id,
         user_id=current_user.id,
+        title=data.get("title", "Untitled Notepad"),
         content=data["content"],
     )
 
@@ -82,6 +84,7 @@ def create_notepad(current_user, idea_id):
                 "id": new_notepad.id,
                 "idea_id": new_notepad.idea_id,
                 "user_id": new_notepad.user_id,
+                "title": new_notepad.title,
                 "content": new_notepad.content,
                 "createdAt": new_notepad.createdAt.isoformat() + "Z",
                 "updatedAt": new_notepad.updatedAt.isoformat() + "Z",
@@ -110,6 +113,7 @@ def get_notepad(current_user, notepad_id):
                 "id": notepad.id,
                 "idea_id": notepad.idea_id,
                 "user_id": notepad.user_id,
+                "title": notepad.title,
                 "content": notepad.content,
                 "createdAt": notepad.createdAt.isoformat() + "Z",
                 "updatedAt": notepad.updatedAt.isoformat() + "Z",
@@ -137,6 +141,11 @@ def update_notepad(current_user, notepad_id):
         return jsonify({"error": "Content is required"}), 400
 
     notepad.content = data["content"]
+
+    # Only update title if provided
+    if "title" in data:
+        notepad.title = data["title"]
+
     db.session.commit()
 
     return (
@@ -145,6 +154,7 @@ def update_notepad(current_user, notepad_id):
                 "id": notepad.id,
                 "idea_id": notepad.idea_id,
                 "user_id": notepad.user_id,
+                "title": notepad.title,
                 "content": notepad.content,
                 "createdAt": notepad.createdAt.isoformat() + "Z",
                 "updatedAt": notepad.updatedAt.isoformat() + "Z",
