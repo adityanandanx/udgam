@@ -108,9 +108,11 @@ export function AppSidebar() {
                               asChild
                             >
                               <Link href={`/dashboard/${ideaId}/notebook`}>
-                                <span className="flex-1">Create new</span>
+                                <span className="flex-1 text-muted-foreground/80">
+                                  Create new
+                                </span>
 
-                                <EditIcon />
+                                <EditIcon className="stroke-muted-foreground/80" />
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

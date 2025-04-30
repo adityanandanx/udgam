@@ -178,6 +178,12 @@ export const Notepad = ({
                       return true;
                     }
                   }
+                  // save with ctrl+s and cmd+s
+                  if (event.key === "s" && (event.ctrlKey || event.metaKey)) {
+                    event.preventDefault();
+                    handleSave();
+                    return true;
+                  }
                 },
               },
             }}
